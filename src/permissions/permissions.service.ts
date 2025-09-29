@@ -19,4 +19,13 @@ export class PermissionsService {
   create(data: CreatePermissionDto) {
     return this.repo.save(data);
   }
+
+  async ensure(name: string, description?: string) {
+    let perm = await this.repo.findOne({ where: { name } });
+    if (!perm) {
+      perm = this.repo.create({ name, description });
+      perm = await this.repo.save(perm);
+    }
+    return perm;
+  }
 }

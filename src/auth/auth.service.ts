@@ -9,12 +9,14 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { NotFoundException } from '@nestjs/common';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private rolesService: RolesService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -36,6 +38,12 @@ export class AuthService {
   async register(data: RegisterDto) {
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) throw new BadRequestException('Email already in use');
+
+    // ensure role exists
+    const role = await this.rolesService.findOne(data.role_id);
+    if (!role) {
+      throw new BadRequestException('Invalid role_id');
+    }
 
     const password_hash = await bcrypt.hash(data.password, 10);
     const user = await this.usersService.create({
