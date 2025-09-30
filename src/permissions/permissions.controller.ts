@@ -9,8 +9,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('permissions')
 @ApiBearerAuth('bearer')
-@Controller('permissions')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
+@Controller('permissions')
 export class PermissionsController {
   constructor(private service: PermissionsService) {}
 

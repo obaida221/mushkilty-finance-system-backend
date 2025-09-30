@@ -18,13 +18,13 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
 @ApiBearerAuth('bearer')
-@Controller('users')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
+@Controller('users')
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 
-  @Get()
   @Permissions('users:read')
+  @Get()
   findAll() {
     return this.service.findAll();
   }

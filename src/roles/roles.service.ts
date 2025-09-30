@@ -41,15 +41,24 @@ export class RolesService {
   // Assign a list of permission names to a role (replaces existing if replace=true)
   async assignPermissions(
     roleId: number,
-    permissionNames: string[],
+    permissionNames: string[] = [],
     replace = false,
+    permissionIds: number[] = [],
   ) {
     const role = await this.repo.findOne({ where: { id: roleId } });
     if (!role) throw new Error('Role not found');
 
-    const perms = await this.permRepo.find({
-      where: { name: In(permissionNames) },
-    });
+    let perms: Permission[] = [];
+    if (permissionNames && permissionNames.length) {
+      perms = await this.permRepo.find({ where: { name: In(permissionNames) } });
+    }
+    if (permissionIds && permissionIds.length) {
+      const byIds = await this.permRepo.find({ where: { id: In(permissionIds) } });
+      perms = [...perms, ...byIds];
+    }
+    // de-duplicate perms by id
+    const unique = new Map(perms.map((p) => [p.id, p]));
+    perms = Array.from(unique.values());
 
     if (replace) {
       await this.rpRepo.delete({ role_id: roleId });

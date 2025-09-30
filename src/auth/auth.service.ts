@@ -1,70 +1,79 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { NotFoundException } from '@nestjs/common';
-import { RolesService } from '../roles/roles.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private rolesService: RolesService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      throw new UnauthorizedException('Invalid email or password');
+    if (user && await bcrypt.compare(password, user.password_hash)) {
+      const { password_hash, ...result } = user;
+      return result;
     }
-    const { password_hash, ...result } = user;
-    return result;
+    return null;
   }
 
-  async login(user: any) {
-    const payload = { sub: user.id, email: user.email, role: user.role_id };
+  async login(loginDto: LoginDto) {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role_id: user.role_id,
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
     };
   }
 
-  async register(data: RegisterDto) {
-    const existing = await this.usersService.findByEmail(data.email);
-    if (existing) throw new BadRequestException('Email already in use');
-
-    // ensure role exists
-    const role = await this.rolesService.findOne(data.role_id);
-    if (!role) {
-      throw new BadRequestException('Invalid role_id');
+  async register(registerDto: RegisterDto) {
+    // Check if user already exists
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
     }
 
-    const password_hash = await bcrypt.hash(data.password, 10);
+    // Hash password
+    const password_hash = await bcrypt.hash(registerDto.password, 10);
+
+    // Create user
     const user = await this.usersService.create({
-      ...data,
+      email: registerDto.email,
+      name: registerDto.name,
       password_hash,
+      role_id: registerDto.role_id,
     });
-    return { message: 'User registered successfully', user };
+
+    // Return without password
+    const { password_hash: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
-  async changePassword(userId: number, dto: ChangePasswordDto) {
+  async getProfile(userId: number) {
     const user = await this.usersService.findOne(userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnauthorizedException('User not found');
     }
-
-    const match = await bcrypt.compare(dto.currentPassword, user.password_hash);
-    if (!match)
-      throw new UnauthorizedException('Current password is incorrect');
-
-    const newHash = await bcrypt.hash(dto.newPassword, 10);
-    await this.usersService.update(userId, { password_hash: newHash });
-    return { message: 'Password updated successfully' };
+    
+    const { password_hash, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 }

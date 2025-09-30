@@ -1,4 +1,4 @@
-import { IsArray, ArrayNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsArray, ArrayNotEmpty, IsString, IsOptional, IsBoolean, IsInt } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class AssignPermissionsDto {
@@ -6,7 +6,14 @@ export class AssignPermissionsDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  permissions: string[];
+  @IsOptional()
+  permissions?: string[];
+
+  @ApiPropertyOptional({ type: [Number], example: [1, 2, 3] })
+  @IsArray()
+  @IsOptional()
+  @IsInt({ each: true })
+  permissionIds?: number[];
 
   @ApiPropertyOptional({ default: false })
   @IsOptional()

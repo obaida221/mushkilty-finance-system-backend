@@ -18,8 +18,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('roles')
 @ApiBearerAuth('bearer')
-@Controller('roles')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
+@Controller('roles')
 export class RolesController {
   constructor(private readonly service: RolesService) {}
 
@@ -53,7 +53,12 @@ export class RolesController {
     @Param('id') id: number,
     @Body() dto: import('./dto/assign-permissions.dto').AssignPermissionsDto,
   ) {
-    return this.service.assignPermissions(id, dto.permissions, dto.replace);
+    return this.service.assignPermissions(
+      id,
+      dto.permissions ?? [],
+      dto.replace,
+      dto.permissionIds ?? [],
+    );
   }
 
   // Basic seed to create a few roles quickly (protect or remove in prod)

@@ -1,53 +1,55 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { RolePermission } from '../../roles/entities/role-permission.entity';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
+    private reflector: Reflector,
     @InjectRepository(RolePermission)
-    private readonly rolePermRepo: Repository<RolePermission>,
+    private rolePermissionRepo: Repository<RolePermission>,
     @InjectRepository(Permission)
-    private readonly permRepo: Repository<Permission>,
+    private permissionRepo: Repository<Permission>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const required = this.reflector.getAllAndOverride<string[]>(
-      PERMISSIONS_KEY,
-      [context.getHandler(), context.getClass()],
-    );
-
-    if (!required || required.length === 0) return true;
+    const requiredPermissions = this.reflector.get<string[]>('permissions', context.getHandler());
+    
+    if (!requiredPermissions || requiredPermissions.length === 0) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user?.role) {
-      throw new ForbiddenException('Access denied: no role set');
+    if (!user || !user.role_id) {
+      throw new ForbiddenException('User role not found');
     }
 
-    // fetch permissions for this role
-    const rows = await this.rolePermRepo.find({
-      where: { role_id: user.role },
-      relations: ['permission'],
-    });
+    // Get user's permissions through their role
+    const userPermissions = await this.rolePermissionRepo
+      .createQueryBuilder('rp')
+      .innerJoin('rp.permission', 'permission')
+      .select('permission.name')
+      .where('rp.role_id = :roleId', { roleId: user.role_id })
+      .getRawMany();
 
-    const names = new Set(rows.map((r) => r.permission?.name).filter(Boolean));
+    const userPermissionNames = userPermissions.map(p => p.permission_name);
 
-    const ok = required.every((p) => names.has(p));
-    if (!ok) {
-      throw new ForbiddenException('Access denied: missing permission');
+    // Check if user has all required permissions
+    const hasPermission = requiredPermissions.every(permission => 
+      userPermissionNames.includes(permission)
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        `Insufficient permissions. Required: ${requiredPermissions.join(', ')}`
+      );
     }
+
     return true;
   }
 }
