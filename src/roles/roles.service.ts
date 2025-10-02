@@ -13,8 +13,7 @@ export class RolesService {
     @InjectRepository(Role) private repo: Repository<Role>,
     @InjectRepository(RolePermission)
     private rpRepo: Repository<RolePermission>,
-    @InjectRepository(Permission)
-    private permRepo: Repository<Permission>,
+    @InjectRepository(Permission) private permRepo: Repository<Permission>,
   ) {}
 
   findAll(): Promise<Role[]> {
@@ -61,18 +60,30 @@ export class RolesService {
     perms = Array.from(unique.values());
 
     if (replace) {
-      await this.rpRepo.delete({ role_id: roleId });
+      await this.rpRepo.delete({ role: { id: roleId } });
     }
 
-    const existing = await this.rpRepo.find({ where: { role_id: roleId } });
-    const existingSet = new Set(existing.map((e) => e.permission_id));
+    const existing = await this.rpRepo.find({
+      where: { role: { id: roleId } },
+      relations: ['permission'],
+    });
+
+    const existingSet = new Set(existing.map((e) => e.permission.id));
 
     const toInsert = perms
       .filter((p) => !existingSet.has(p.id))
-      .map((p) => this.rpRepo.create({ role_id: roleId, permission_id: p.id }));
+      .map((p) =>
+        this.rpRepo.create({
+          role: { id: roleId },
+          permission: { id: p.id },
+        }),
+      );
 
     if (toInsert.length) await this.rpRepo.save(toInsert);
 
-    return this.rpRepo.find({ where: { role_id: roleId }, relations: ['permission'] });
+    return this.rpRepo.find({
+      where: { role: { id: roleId } },
+      relations: ['permission'],
+    });
   }
 }

@@ -29,7 +29,7 @@ export class UsersService {
       ...data,
       password_hash,
     });
-    
+
     return this.repo.save(user);
   }
 
@@ -47,7 +47,14 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.repo.findOne({ where: { email }, relations: ['role'] });
   }
-  
+
+  async findByEmailWithRole(email: string): Promise<User | null> {
+    return this.repo.findOne({
+      where: { email },
+      relations: ['role'],
+    });
+  }
+
   async remove(id: number): Promise<void> {
     await this.repo.delete(id);
   }

@@ -8,6 +8,12 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
+import { StudentsModule } from './students/students.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { PaymentsModule } from './payments/payments.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { DiscountCodesModule } from './discount-codes/discount-codes.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -28,8 +34,14 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
     AuthModule,
     UsersModule,
     RolesModule,
-  PermissionsModule,
-  BootstrapModule,
+    PermissionsModule,
+    BootstrapModule,
+    StudentsModule,
+    EnrollmentsModule,
+    PaymentsModule,
+    PaymentMethodsModule,
+    DiscountCodesModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
