@@ -39,18 +39,14 @@ export class BootstrapService {
       'permissions:delete',
     ];
 
-    for (const name of permissions) {
-      const exists = await this.permRepo.findOne({ where: { name } });
-      if (!exists) {
-        const perm = new Permission();
-        perm.name = name;
-        await this.permRepo.save(perm);
-      }
-    }
+    const existingPerms = await this.permRepo.find({ where: { name: In(permissions) } });
+    const existingSet = new Set(existingPerms.map((p) => p.name));
+    const toCreate = permissions
+      .filter((name) => !existingSet.has(name))
+      .map((name) => this.permRepo.create({ name }));
+    if (toCreate.length) await this.permRepo.save(toCreate);
 
-    const allPerms = await this.permRepo.find({
-      where: { name: In(permissions) },
-    });
+    const allPerms = await this.permRepo.find({ where: { name: In(permissions) } });
 
     // Seed roles
     const roles = [
@@ -59,48 +55,36 @@ export class BootstrapService {
       { name: 'approver', description: 'Approve high-value transactions' },
       { name: 'viewer', description: 'Read-only access' },
     ];
-
-    for (const r of roles) {
-      const exists = await this.roleRepo.findOne({ where: { name: r.name } });
-      if (!exists) {
-        const role = new Role();
-        role.name = r.name;
-        role.description = r.description;
-        await this.roleRepo.save(role);
-      }
-    }
+    const existingRoles = await this.roleRepo.find();
+    const roleNames = new Set(existingRoles.map((r) => r.name));
+    const rolesToCreate = roles
+      .filter((r) => !roleNames.has(r.name))
+      .map((r) => this.roleRepo.create(r));
+    if (rolesToCreate.length) await this.roleRepo.save(rolesToCreate);
 
     const admin = await this.roleRepo.findOne({ where: { name: 'admin' } });
     if (admin) {
-      const existingRps = await this.rpRepo.find({
-        where: { role: { id: admin.id } },
-        relations: ['permission'],
-      });
-
-      const permIdSet = new Set(existingRps.map((rp) => rp.permission.id));
-
-      for (const p of allPerms) {
-        if (!permIdSet.has(p.id)) {
-          const rp = new RolePermission();
-          rp.role = admin;
-          rp.permission = p;
-          await this.rpRepo.save(rp);
-        }
-      }
+      // Assign all permissions to admin
+      const existingRps = await this.rpRepo.find({ where: { role_id: admin.id } });
+      const permIdSet = new Set(existingRps.map((rp) => rp.permission_id));
+      const rpsToCreate = allPerms
+        .filter((p) => !permIdSet.has(p.id))
+        .map((p) => this.rpRepo.create({ role_id: admin.id, permission_id: p.id }));
+      if (rpsToCreate.length) await this.rpRepo.save(rpsToCreate);
     }
 
-    // Seed admin user
-    const anyUser = await this.userRepo.findOne({
-      where: { email: 'admin@example.com' },
-    });
+    // Seed admin user if none exists
+    const anyUser = await this.userRepo.findOne({ where: { email: 'admin@example.com' } });
     if (!anyUser && admin) {
       const password_hash = await bcrypt.hash('Admin@123', 10);
-      const user = new User();
-      user.email = 'admin@example.com';
-      user.name = 'Bootstrap Admin';
-      user.password_hash = password_hash;
-      user.role = admin;
-      await this.userRepo.save(user);
+      await this.userRepo.save(
+        this.userRepo.create({
+          email: 'admin@example.com',
+          name: 'Bootstrap Admin',
+          password_hash,
+          role_id: admin.id,
+        }),
+      );
     }
 
     return { ok: true };
