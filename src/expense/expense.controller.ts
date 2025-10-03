@@ -25,7 +25,7 @@ export class ExpenseController {
   constructor(private readonly service: ExpenseService) {}
 
   @Post()
-  @Permissions('expense:create')
+  @Permissions('expenses:create')
   @ApiOperation({ summary: 'Create a new expense' })
   @ApiResponse({ status: 201, description: 'The expense has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class ExpenseController {
   }
 
   @Get()
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Get all expenses' })
   @ApiResponse({ status: 200, description: 'Return all expenses.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class ExpenseController {
   }
 
   @Get('search/user/:userId')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Find expenses by user' })
   @ApiResponse({ status: 200, description: 'Return expenses for the specified user.' })
   findByUser(@Param('userId') userId: string) {
@@ -51,7 +51,7 @@ export class ExpenseController {
   }
 
   @Get('search/category')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Find expenses by category' })
   @ApiQuery({ name: 'category', required: true, description: 'Expense category' })
   @ApiResponse({ status: 200, description: 'Return expenses for the specified category.' })
@@ -60,7 +60,7 @@ export class ExpenseController {
   }
 
   @Get('search/date-range')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Find expenses by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -70,7 +70,7 @@ export class ExpenseController {
   }
 
   @Get('totals/user/:userId')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Get total expenses by user' })
   @ApiResponse({ status: 200, description: 'Return total expenses for the user.' })
   getTotalExpensesByUser(@Param('userId') userId: string) {
@@ -78,7 +78,7 @@ export class ExpenseController {
   }
 
   @Get('totals/category')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Get total expenses by category' })
   @ApiQuery({ name: 'category', required: true, description: 'Expense category' })
   @ApiResponse({ status: 200, description: 'Return total expenses for the category.' })
@@ -87,7 +87,7 @@ export class ExpenseController {
   }
 
   @Get('totals/date-range')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Get total expenses by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -97,7 +97,7 @@ export class ExpenseController {
   }
 
   @Get(':id')
-  @Permissions('expense:read')
+  @Permissions('expenses:read')
   @ApiOperation({ summary: 'Get an expense by id' })
   @ApiResponse({ status: 200, description: 'Return the expense.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -107,7 +107,7 @@ export class ExpenseController {
   }
 
   @Patch(':id')
-  @Permissions('expense:update')
+  @Permissions('expenses:update')
   @ApiOperation({ summary: 'Update an expense' })
   @ApiResponse({ status: 200, description: 'The expense has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -117,7 +117,7 @@ export class ExpenseController {
   }
 
   @Delete(':id')
-  @Permissions('expense:delete')
+  @Permissions('expenses:delete')
   @ApiOperation({ summary: 'Delete an expense' })
   @ApiResponse({ status: 200, description: 'The expense has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })

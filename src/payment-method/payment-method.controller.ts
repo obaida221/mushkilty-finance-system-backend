@@ -25,7 +25,7 @@ export class PaymentMethodController {
   constructor(private readonly service: PaymentMethodService) {}
 
   @Post()
-  @Permissions('payment-method:create')
+  @Permissions('payment-methods:create')
   @ApiOperation({ summary: 'Create a new payment method' })
   @ApiResponse({ status: 201, description: 'The payment method has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class PaymentMethodController {
   }
 
   @Get()
-  @Permissions('payment-method:read')
+  @Permissions('payment-methods:read')
   @ApiOperation({ summary: 'Get all payment methods' })
   @ApiResponse({ status: 200, description: 'Return all payment methods.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class PaymentMethodController {
   }
 
   @Get('active')
-  @Permissions('payment-method:read')
+  @Permissions('payment-methods:read')
   @ApiOperation({ summary: 'Get all active payment methods' })
   @ApiResponse({ status: 200, description: 'Return all active payment methods.' })
   findActivePaymentMethods() {
@@ -51,7 +51,7 @@ export class PaymentMethodController {
   }
 
   @Get('search/name/:name')
-  @Permissions('payment-method:read')
+  @Permissions('payment-methods:read')
   @ApiOperation({ summary: 'Find payment method by name' })
   @ApiResponse({ status: 200, description: 'Return the payment method.' })
   @ApiResponse({ status: 404, description: 'Payment method not found.' })
@@ -60,7 +60,7 @@ export class PaymentMethodController {
   }
 
   @Get(':id')
-  @Permissions('payment-method:read')
+  @Permissions('payment-methods:read')
   @ApiOperation({ summary: 'Get a payment method by id' })
   @ApiResponse({ status: 200, description: 'Return the payment method.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -70,7 +70,7 @@ export class PaymentMethodController {
   }
 
   @Patch(':id')
-  @Permissions('payment-method:update')
+  @Permissions('payment-methods:update')
   @ApiOperation({ summary: 'Update a payment method' })
   @ApiResponse({ status: 200, description: 'The payment method has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -80,7 +80,7 @@ export class PaymentMethodController {
   }
 
   @Delete(':id')
-  @Permissions('payment-method:delete')
+  @Permissions('payment-methods:delete')
   @ApiOperation({ summary: 'Delete a payment method' })
   @ApiResponse({ status: 200, description: 'The payment method has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -89,3 +89,4 @@ export class PaymentMethodController {
     return this.service.remove(+id);
   }
 }
+

@@ -25,7 +25,7 @@ export class EnrollmentController {
   constructor(private readonly service: EnrollmentService) {}
 
   @Post()
-  @Permissions('enrollment:create')
+  @Permissions('enrollments:create')
   @ApiOperation({ summary: 'Create a new enrollment' })
   @ApiResponse({ status: 201, description: 'The enrollment has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class EnrollmentController {
   }
 
   @Get()
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Get all enrollments' })
   @ApiResponse({ status: 200, description: 'Return all enrollments.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class EnrollmentController {
   }
 
   @Get('active')
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Get all active enrollments' })
   @ApiResponse({ status: 200, description: 'Return all active enrollments.' })
   findActiveEnrollments() {
@@ -51,7 +51,7 @@ export class EnrollmentController {
   }
 
   @Get('search/student/:studentId')
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Find enrollments by student' })
   @ApiResponse({ status: 200, description: 'Return enrollments for the specified student.' })
   findByStudent(@Param('studentId') studentId: string) {
@@ -59,7 +59,7 @@ export class EnrollmentController {
   }
 
   @Get('search/batch/:batchId')
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Find enrollments by batch' })
   @ApiResponse({ status: 200, description: 'Return enrollments for the specified batch.' })
   findByBatch(@Param('batchId') batchId: string) {
@@ -67,7 +67,7 @@ export class EnrollmentController {
   }
 
   @Get('search/status')
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Find enrollments by status' })
   @ApiQuery({ name: 'status', required: true, description: 'Enrollment status' })
   @ApiResponse({ status: 200, description: 'Return enrollments with the specified status.' })
@@ -76,7 +76,7 @@ export class EnrollmentController {
   }
 
   @Get(':id')
-  @Permissions('enrollment:read')
+  @Permissions('enrollments:read')
   @ApiOperation({ summary: 'Get an enrollment by id' })
   @ApiResponse({ status: 200, description: 'Return the enrollment.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -86,7 +86,7 @@ export class EnrollmentController {
   }
 
   @Patch(':id')
-  @Permissions('enrollment:update')
+  @Permissions('enrollments:update')
   @ApiOperation({ summary: 'Update an enrollment' })
   @ApiResponse({ status: 200, description: 'The enrollment has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -96,7 +96,7 @@ export class EnrollmentController {
   }
 
   @Delete(':id')
-  @Permissions('enrollment:delete')
+  @Permissions('enrollments:delete')
   @ApiOperation({ summary: 'Delete an enrollment' })
   @ApiResponse({ status: 200, description: 'The enrollment has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -105,3 +105,4 @@ export class EnrollmentController {
     return this.service.remove(+id);
   }
 }
+

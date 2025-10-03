@@ -25,7 +25,7 @@ export class PayrollController {
   constructor(private readonly service: PayrollService) {}
 
   @Post()
-  @Permissions('payroll:create')
+  @Permissions('payrolls:create')
   @ApiOperation({ summary: 'Create a new payroll' })
   @ApiResponse({ status: 201, description: 'The payroll has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class PayrollController {
   }
 
   @Get()
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Get all payrolls' })
   @ApiResponse({ status: 200, description: 'Return all payrolls.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class PayrollController {
   }
 
   @Get('search/user/:userId')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Find payrolls by user' })
   @ApiResponse({ status: 200, description: 'Return payrolls for the specified user.' })
   findByUser(@Param('userId') userId: string) {
@@ -51,7 +51,7 @@ export class PayrollController {
   }
 
   @Get('search/date-range')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Find payrolls by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -61,7 +61,7 @@ export class PayrollController {
   }
 
   @Get('search/pay-period')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Find payrolls by pay period' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Pay period start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'Pay period end date (YYYY-MM-DD)' })
@@ -71,7 +71,7 @@ export class PayrollController {
   }
 
   @Get('totals/user/:userId')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Get total payroll by user' })
   @ApiResponse({ status: 200, description: 'Return total payroll for the user.' })
   getTotalPayrollByUser(@Param('userId') userId: string) {
@@ -79,7 +79,7 @@ export class PayrollController {
   }
 
   @Get('totals/date-range')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Get total payroll by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -89,7 +89,7 @@ export class PayrollController {
   }
 
   @Get(':id')
-  @Permissions('payroll:read')
+  @Permissions('payrolls:read')
   @ApiOperation({ summary: 'Get a payroll by id' })
   @ApiResponse({ status: 200, description: 'Return the payroll.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -99,7 +99,7 @@ export class PayrollController {
   }
 
   @Patch(':id')
-  @Permissions('payroll:update')
+  @Permissions('payrolls:update')
   @ApiOperation({ summary: 'Update a payroll' })
   @ApiResponse({ status: 200, description: 'The payroll has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -109,7 +109,7 @@ export class PayrollController {
   }
 
   @Delete(':id')
-  @Permissions('payroll:delete')
+  @Permissions('payrolls:delete')
   @ApiOperation({ summary: 'Delete a payroll' })
   @ApiResponse({ status: 200, description: 'The payroll has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -118,3 +118,4 @@ export class PayrollController {
     return this.service.remove(+id);
   }
 }
+

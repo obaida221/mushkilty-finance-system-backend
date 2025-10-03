@@ -25,7 +25,7 @@ export class StudentController {
   constructor(private readonly service: StudentService) {}
 
   @Post()
-  @Permissions('student:create')
+  @Permissions('students:create')
   @ApiOperation({ summary: 'Create a new student' })
   @ApiResponse({ status: 201, description: 'The student has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class StudentController {
   }
 
   @Get()
-  @Permissions('student:read')
+  @Permissions('students:read')
   @ApiOperation({ summary: 'Get all students' })
   @ApiResponse({ status: 200, description: 'Return all students.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class StudentController {
   }
 
   @Get('search/phone/:phone')
-  @Permissions('student:read')
+  @Permissions('students:search')
   @ApiOperation({ summary: 'Find student by phone number' })
   @ApiResponse({ status: 200, description: 'Return the student.' })
   @ApiResponse({ status: 404, description: 'Student not found.' })
@@ -52,7 +52,7 @@ export class StudentController {
   }
 
   @Get('search/status')
-  @Permissions('student:read')
+  @Permissions('students:search')
   @ApiOperation({ summary: 'Find students by status' })
   @ApiQuery({ name: 'status', required: true, description: 'Student status' })
   @ApiResponse({ status: 200, description: 'Return students with the specified status.' })
@@ -61,7 +61,7 @@ export class StudentController {
   }
 
   @Get(':id')
-  @Permissions('student:read')
+  @Permissions('students:read')
   @ApiOperation({ summary: 'Get a student by id' })
   @ApiResponse({ status: 200, description: 'Return the student.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -71,7 +71,7 @@ export class StudentController {
   }
 
   @Patch(':id')
-  @Permissions('student:update')
+  @Permissions('students:update')
   @ApiOperation({ summary: 'Update a student' })
   @ApiResponse({ status: 200, description: 'The student has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -81,7 +81,7 @@ export class StudentController {
   }
 
   @Delete(':id')
-  @Permissions('student:delete')
+  @Permissions('students:delete')
   @ApiOperation({ summary: 'Delete a student' })
   @ApiResponse({ status: 200, description: 'The student has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })

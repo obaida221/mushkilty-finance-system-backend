@@ -25,7 +25,7 @@ export class PaymentController {
   constructor(private readonly service: PaymentService) {}
 
   @Post()
-  @Permissions('payment:create')
+  @Permissions('payments:create')
   @ApiOperation({ summary: 'Create a new payment' })
   @ApiResponse({ status: 201, description: 'The payment has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class PaymentController {
   }
 
   @Get()
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Get all payments' })
   @ApiResponse({ status: 200, description: 'Return all payments.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class PaymentController {
   }
 
   @Get('search/student/:studentId')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Find payments by student' })
   @ApiResponse({ status: 200, description: 'Return payments for the specified student.' })
   findByStudent(@Param('studentId') studentId: string) {
@@ -51,7 +51,7 @@ export class PaymentController {
   }
 
   @Get('search/payment-method/:paymentMethodId')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Find payments by payment method' })
   @ApiResponse({ status: 200, description: 'Return payments for the specified payment method.' })
   findByPaymentMethod(@Param('paymentMethodId') paymentMethodId: string) {
@@ -59,7 +59,7 @@ export class PaymentController {
   }
 
   @Get('search/date-range')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Find payments by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -69,7 +69,7 @@ export class PaymentController {
   }
 
   @Get('totals/student/:studentId')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Get total payments by student' })
   @ApiResponse({ status: 200, description: 'Return total payments for the student.' })
   getTotalPaymentsByStudent(@Param('studentId') studentId: string) {
@@ -77,7 +77,7 @@ export class PaymentController {
   }
 
   @Get('totals/date-range')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Get total payments by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -87,7 +87,7 @@ export class PaymentController {
   }
 
   @Get(':id')
-  @Permissions('payment:read')
+  @Permissions('payments:read')
   @ApiOperation({ summary: 'Get a payment by id' })
   @ApiResponse({ status: 200, description: 'Return the payment.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -97,7 +97,7 @@ export class PaymentController {
   }
 
   @Patch(':id')
-  @Permissions('payment:update')
+  @Permissions('payments:update')
   @ApiOperation({ summary: 'Update a payment' })
   @ApiResponse({ status: 200, description: 'The payment has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -107,7 +107,7 @@ export class PaymentController {
   }
 
   @Delete(':id')
-  @Permissions('payment:delete')
+  @Permissions('payments:delete')
   @ApiOperation({ summary: 'Delete a payment' })
   @ApiResponse({ status: 200, description: 'The payment has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -116,3 +116,4 @@ export class PaymentController {
     return this.service.remove(+id);
   }
 }
+

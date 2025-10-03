@@ -25,7 +25,7 @@ export class RefundController {
   constructor(private readonly service: RefundService) {}
 
   @Post()
-  @Permissions('refund:create')
+  @Permissions('refunds:create')
   @ApiOperation({ summary: 'Create a new refund' })
   @ApiResponse({ status: 201, description: 'The refund has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class RefundController {
   }
 
   @Get()
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Get all refunds' })
   @ApiResponse({ status: 200, description: 'Return all refunds.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class RefundController {
   }
 
   @Get('search/payment/:paymentId')
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Find refunds by payment' })
   @ApiResponse({ status: 200, description: 'Return refunds for the specified payment.' })
   findByPayment(@Param('paymentId') paymentId: string) {
@@ -51,7 +51,7 @@ export class RefundController {
   }
 
   @Get('search/date-range')
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Find refunds by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -61,7 +61,7 @@ export class RefundController {
   }
 
   @Get('totals/payment/:paymentId')
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Get total refunds by payment' })
   @ApiResponse({ status: 200, description: 'Return total refunds for the payment.' })
   getTotalRefundsByPayment(@Param('paymentId') paymentId: string) {
@@ -69,7 +69,7 @@ export class RefundController {
   }
 
   @Get('totals/date-range')
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Get total refunds by date range' })
   @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
   @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
@@ -79,7 +79,7 @@ export class RefundController {
   }
 
   @Get(':id')
-  @Permissions('refund:read')
+  @Permissions('refunds:read')
   @ApiOperation({ summary: 'Get a refund by id' })
   @ApiResponse({ status: 200, description: 'Return the refund.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -89,7 +89,7 @@ export class RefundController {
   }
 
   @Patch(':id')
-  @Permissions('refund:update')
+  @Permissions('refunds:update')
   @ApiOperation({ summary: 'Update a refund' })
   @ApiResponse({ status: 200, description: 'The refund has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -99,7 +99,7 @@ export class RefundController {
   }
 
   @Delete(':id')
-  @Permissions('refund:delete')
+  @Permissions('refunds:delete')
   @ApiOperation({ summary: 'Delete a refund' })
   @ApiResponse({ status: 200, description: 'The refund has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -108,3 +108,4 @@ export class RefundController {
     return this.service.remove(+id);
   }
 }
+

@@ -25,7 +25,7 @@ export class DiscountCodeController {
   constructor(private readonly service: DiscountCodeService) {}
 
   @Post()
-  @Permissions('discount-code:create')
+  @Permissions('discount-codes:create')
   @ApiOperation({ summary: 'Create a new discount code' })
   @ApiResponse({ status: 201, description: 'The discount code has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class DiscountCodeController {
   }
 
   @Get()
-  @Permissions('discount-code:read')
+  @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Get all discount codes' })
   @ApiResponse({ status: 200, description: 'Return all discount codes.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class DiscountCodeController {
   }
 
   @Get('active')
-  @Permissions('discount-code:read')
+  @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Get all active discount codes' })
   @ApiResponse({ status: 200, description: 'Return all active discount codes.' })
   findActiveDiscounts() {
@@ -51,7 +51,7 @@ export class DiscountCodeController {
   }
 
   @Post('validate')
-  @Permissions('discount-code:read')
+  @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Validate a discount code' })
   @ApiResponse({ status: 200, description: 'Discount code is valid.' })
   @ApiResponse({ status: 400, description: 'Discount code is invalid or expired.' })
@@ -61,7 +61,7 @@ export class DiscountCodeController {
   }
 
   @Get('search/code/:code')
-  @Permissions('discount-code:read')
+  @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Find discount code by code' })
   @ApiResponse({ status: 200, description: 'Return the discount code.' })
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
@@ -70,7 +70,7 @@ export class DiscountCodeController {
   }
 
   @Get(':id')
-  @Permissions('discount-code:read')
+  @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Get a discount code by id' })
   @ApiResponse({ status: 200, description: 'Return the discount code.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -80,7 +80,7 @@ export class DiscountCodeController {
   }
 
   @Patch(':id')
-  @Permissions('discount-code:update')
+  @Permissions('discount-codes:update')
   @ApiOperation({ summary: 'Update a discount code' })
   @ApiResponse({ status: 200, description: 'The discount code has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -90,7 +90,7 @@ export class DiscountCodeController {
   }
 
   @Delete(':id')
-  @Permissions('discount-code:delete')
+  @Permissions('discount-codes:delete')
   @ApiOperation({ summary: 'Delete a discount code' })
   @ApiResponse({ status: 200, description: 'The discount code has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -100,7 +100,7 @@ export class DiscountCodeController {
   }
 
   @Patch(':id/increment-usage')
-  @Permissions('discount-code:update')
+  @Permissions('discount-codes:update')
   @ApiOperation({ summary: 'Increment usage count of a discount code' })
   @ApiResponse({ status: 200, description: 'Usage count incremented.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -108,3 +108,4 @@ export class DiscountCodeController {
     return this.service.incrementUsage(+id);
   }
 }
+

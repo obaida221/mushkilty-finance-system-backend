@@ -25,7 +25,7 @@ export class BatchController {
   constructor(private readonly service: BatchService) {}
 
   @Post()
-  @Permissions('batch:create')
+  @Permissions('batches:create')
   @ApiOperation({ summary: 'Create a new batch' })
   @ApiResponse({ status: 201, description: 'The batch has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -34,7 +34,7 @@ export class BatchController {
   }
 
   @Get()
-  @Permissions('batch:read')
+  @Permissions('batches:read')
   @ApiOperation({ summary: 'Get all batches' })
   @ApiResponse({ status: 200, description: 'Return all batches.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -43,7 +43,7 @@ export class BatchController {
   }
 
   @Get('active')
-  @Permissions('batch:read')
+  @Permissions('batches:read')
   @ApiOperation({ summary: 'Get all active batches' })
   @ApiResponse({ status: 200, description: 'Return all active batches.' })
   findActiveBatches() {
@@ -51,7 +51,7 @@ export class BatchController {
   }
 
   @Get('search/course/:courseId')
-  @Permissions('batch:read')
+  @Permissions('batches:read')
   @ApiOperation({ summary: 'Find batches by course' })
   @ApiResponse({ status: 200, description: 'Return batches for the specified course.' })
   findByCourse(@Param('courseId') courseId: string) {
@@ -59,7 +59,7 @@ export class BatchController {
   }
 
   @Get('search/name')
-  @Permissions('batch:read')
+  @Permissions('batches:read')
   @ApiOperation({ summary: 'Find batches by name' })
   @ApiQuery({ name: 'name', required: true, description: 'Batch name' })
   @ApiResponse({ status: 200, description: 'Return batches with the specified name.' })
@@ -68,7 +68,7 @@ export class BatchController {
   }
 
   @Get(':id')
-  @Permissions('batch:read')
+  @Permissions('batches:read')
   @ApiOperation({ summary: 'Get a batch by id' })
   @ApiResponse({ status: 200, description: 'Return the batch.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -78,7 +78,7 @@ export class BatchController {
   }
 
   @Patch(':id')
-  @Permissions('batch:update')
+  @Permissions('batches:update')
   @ApiOperation({ summary: 'Update a batch' })
   @ApiResponse({ status: 200, description: 'The batch has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -88,7 +88,7 @@ export class BatchController {
   }
 
   @Delete(':id')
-  @Permissions('batch:delete')
+  @Permissions('batches:delete')
   @ApiOperation({ summary: 'Delete a batch' })
   @ApiResponse({ status: 200, description: 'The batch has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not found.' })
@@ -97,3 +97,4 @@ export class BatchController {
     return this.service.remove(+id);
   }
 }
+
