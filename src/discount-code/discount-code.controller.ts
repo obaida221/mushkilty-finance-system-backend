@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DiscountCodeService } from './discount-code.service';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
 import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
@@ -42,14 +41,6 @@ export class DiscountCodeController {
     return this.service.findAll();
   }
 
-  @Get('active')
-  @Permissions('discount-codes:read')
-  @ApiOperation({ summary: 'Get all active discount codes' })
-  @ApiResponse({ status: 200, description: 'Return all active discount codes.' })
-  findActiveDiscounts() {
-    return this.service.findActiveDiscounts();
-  }
-
   @Post('validate')
   @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Validate a discount code' })
@@ -58,15 +49,6 @@ export class DiscountCodeController {
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
   validateCode(@Body('code') code: string) {
     return this.service.validateCode(code);
-  }
-
-  @Get('search/code/:code')
-  @Permissions('discount-codes:read')
-  @ApiOperation({ summary: 'Find discount code by code' })
-  @ApiResponse({ status: 200, description: 'Return the discount code.' })
-  @ApiResponse({ status: 404, description: 'Discount code not found.' })
-  findByCode(@Param('code') code: string) {
-    return this.service.findByCode(code);
   }
 
   @Get(':id')

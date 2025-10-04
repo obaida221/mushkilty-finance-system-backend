@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Refund } from './entities/refund.entity';
 import { CreateRefundDto } from './dto/create-refund.dto';
 import { UpdateRefundDto } from './dto/update-refund.dto';
@@ -46,43 +46,5 @@ export class RefundService {
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
-  }
-
-  async findByPayment(paymentId: number): Promise<Refund[]> {
-    return this.repository.find({
-      where: { payment_id: paymentId },
-      relations: ['payment'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findByDateRange(startDate: Date, endDate: Date): Promise<Refund[]> {
-    return this.repository.find({
-      where: {
-        created_at: Between(startDate, endDate)
-      },
-      relations: ['payment', 'payment.enrollment', 'payment.enrollment.student'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async getTotalRefundsByPayment(paymentId: number): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder('refund')
-      .select('SUM(refund.amount)', 'total')
-      .where('refund.payment_id = :paymentId', { paymentId })
-      .getRawOne();
-    
-    return parseFloat(result.total) || 0;
-  }
-
-  async getTotalRefundsByDateRange(startDate: Date, endDate: Date): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder('refund')
-      .select('SUM(refund.amount)', 'total')
-      .where('refund.created_at BETWEEN :startDate AND :endDate', { startDate, endDate })
-      .getRawOne();
-    
-    return parseFloat(result.total) || 0;
   }
 }

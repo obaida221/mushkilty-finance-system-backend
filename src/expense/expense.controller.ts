@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ExpenseService } from './expense.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -40,60 +39,6 @@ export class ExpenseController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('search/user/:userId')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Find expenses by user' })
-  @ApiResponse({ status: 200, description: 'Return expenses for the specified user.' })
-  findByUser(@Param('userId') userId: string) {
-    return this.service.findByUser(+userId);
-  }
-
-  @Get('search/category')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Find expenses by category' })
-  @ApiQuery({ name: 'category', required: true, description: 'Expense category' })
-  @ApiResponse({ status: 200, description: 'Return expenses for the specified category.' })
-  findByCategory(@Query('category') category: string) {
-    return this.service.findByCategory(category);
-  }
-
-  @Get('search/date-range')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Find expenses by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return expenses within the specified date range.' })
-  findByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.findByDateRange(new Date(startDate), new Date(endDate));
-  }
-
-  @Get('totals/user/:userId')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Get total expenses by user' })
-  @ApiResponse({ status: 200, description: 'Return total expenses for the user.' })
-  getTotalExpensesByUser(@Param('userId') userId: string) {
-    return this.service.getTotalExpensesByUser(+userId);
-  }
-
-  @Get('totals/category')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Get total expenses by category' })
-  @ApiQuery({ name: 'category', required: true, description: 'Expense category' })
-  @ApiResponse({ status: 200, description: 'Return total expenses for the category.' })
-  getTotalExpensesByCategory(@Query('category') category: string) {
-    return this.service.getTotalExpensesByCategory(category);
-  }
-
-  @Get('totals/date-range')
-  @Permissions('expenses:read')
-  @ApiOperation({ summary: 'Get total expenses by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return total expenses within the date range.' })
-  getTotalExpensesByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.getTotalExpensesByDateRange(new Date(startDate), new Date(endDate));
   }
 
   @Get(':id')

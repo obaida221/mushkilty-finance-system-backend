@@ -80,15 +80,4 @@ export class DiscountCodeService {
   async incrementUsage(id: number): Promise<void> {
     await this.repository.increment({ id }, 'used_count', 1);
   }
-
-  async findActiveDiscounts(): Promise<DiscountCode[]> {
-    const currentDate = new Date();
-    return this.repository
-      .createQueryBuilder('discount')
-      .where('(discount.valid_to IS NULL OR discount.valid_to > :currentDate)', { currentDate })
-      .andWhere('(discount.usage_limit IS NULL OR discount.used_count < discount.usage_limit)')
-      .andWhere('discount.active = :active', { active: true })
-      .orderBy('discount.created_at', 'DESC')
-      .getMany();
-  }
 }

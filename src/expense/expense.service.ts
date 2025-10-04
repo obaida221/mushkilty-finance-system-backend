@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -46,60 +46,5 @@ export class ExpenseService {
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
-  }
-
-  async findByUser(userId: number): Promise<Expense[]> {
-    return this.repository.find({
-      where: { user_id: userId },
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findByCategory(category: string): Promise<Expense[]> {
-    return this.repository.find({
-      where: { category },
-      relations: ['user'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findByDateRange(startDate: Date, endDate: Date): Promise<Expense[]> {
-    return this.repository.find({
-      where: {
-        created_at: Between(startDate, endDate)
-      },
-      relations: ['user'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async getTotalExpensesByUser(userId: number): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('expense.user_id = :userId', { userId })
-      .getRawOne();
-    
-    return parseFloat(result.total) || 0;
-  }
-
-  async getTotalExpensesByCategory(category: string): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('expense.category = :category', { category })
-      .getRawOne();
-    
-    return parseFloat(result.total) || 0;
-  }
-
-  async getTotalExpensesByDateRange(startDate: Date, endDate: Date): Promise<number> {
-    const result = await this.repository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('expense.created_at BETWEEN :startDate AND :endDate', { startDate, endDate })
-      .getRawOne();
-    
-    return parseFloat(result.total) || 0;
   }
 }

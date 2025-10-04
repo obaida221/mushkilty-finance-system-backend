@@ -47,36 +47,4 @@ export class EnrollmentService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
-
-  async findByStudent(studentId: number): Promise<Enrollment[]> {
-    return this.repository.find({
-      where: { student_id: studentId },
-      relations: ['batch', 'batch.course'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findByBatch(batchId: number): Promise<Enrollment[]> {
-    return this.repository.find({
-      where: { batch_id: batchId },
-      relations: ['student'],
-      order: { created_at: 'ASC' }
-    });
-  }
-
-  async findByStatus(status: string): Promise<Enrollment[]> {
-    return this.repository.find({
-      where: { status },
-      relations: ['student', 'batch'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findActiveEnrollments(): Promise<Enrollment[]> {
-    return this.repository.find({
-      where: { status: 'active' },
-      relations: ['student', 'batch', 'batch.course'],
-      order: { created_at: 'DESC' }
-    });
-  }
 }

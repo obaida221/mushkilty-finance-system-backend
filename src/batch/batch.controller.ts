@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { BatchService } from './batch.service';
 import { CreateBatchDto } from './dto/create-batch.dto';
 import { UpdateBatchDto } from './dto/update-batch.dto';
@@ -40,31 +39,6 @@ export class BatchController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('active')
-  @Permissions('batches:read')
-  @ApiOperation({ summary: 'Get all active batches' })
-  @ApiResponse({ status: 200, description: 'Return all active batches.' })
-  findActiveBatches() {
-    return this.service.findActiveBatches();
-  }
-
-  @Get('search/course/:courseId')
-  @Permissions('batches:read')
-  @ApiOperation({ summary: 'Find batches by course' })
-  @ApiResponse({ status: 200, description: 'Return batches for the specified course.' })
-  findByCourse(@Param('courseId') courseId: string) {
-    return this.service.findByCourse(+courseId);
-  }
-
-  @Get('search/name')
-  @Permissions('batches:read')
-  @ApiOperation({ summary: 'Find batches by name' })
-  @ApiQuery({ name: 'name', required: true, description: 'Batch name' })
-  @ApiResponse({ status: 200, description: 'Return batches with the specified name.' })
-  findByName(@Query('name') name: string) {
-    return this.service.findByName(name);
   }
 
   @Get(':id')

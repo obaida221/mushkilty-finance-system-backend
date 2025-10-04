@@ -47,20 +47,4 @@ export class CourseService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
-
-  async findByProjectType(projectType: string): Promise<Course[]> {
-    return this.repository.find({
-      where: { project_type: projectType },
-      relations: ['user'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findByUser(userId: number): Promise<Course[]> {
-    return this.repository.find({
-      where: { user_id: userId },
-      relations: ['batches'],
-      order: { created_at: 'DESC' }
-    });
-  }
 }

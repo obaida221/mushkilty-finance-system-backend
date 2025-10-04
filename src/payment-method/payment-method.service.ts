@@ -47,24 +47,4 @@ export class PaymentMethodService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
-
-  async findByName(name: string): Promise<PaymentMethod> {
-    const entity = await this.repository.findOne({
-      where: { name },
-      relations: ['payments']
-    });
-    
-    if (!entity) {
-      throw new NotFoundException(`Payment method '${name}' not found`);
-    }
-    
-    return entity;
-  }
-
-  async findActivePaymentMethods(): Promise<PaymentMethod[]> {
-    return this.repository.find({
-      where: { is_valid: true },
-      order: { name: 'ASC' }
-    });
-  }
 }

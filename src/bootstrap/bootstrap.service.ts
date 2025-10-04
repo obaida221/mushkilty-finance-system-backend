@@ -62,75 +62,60 @@ export class BootstrapService {
         'students:read',
         'students:update',
         'students:delete',
-        'students:search',
         
         // Courses
         'courses:create',
         'courses:read',
         'courses:update',
         'courses:delete',
-        'courses:search',
         
         // Batches
         'batches:create',
         'batches:read',
         'batches:update',
         'batches:delete',
-        'batches:search',
         
         // Enrollments
         'enrollments:create',
         'enrollments:read',
         'enrollments:update',
         'enrollments:delete',
-        'enrollments:search',
         
         // Discount Codes
         'discount-codes:create',
         'discount-codes:read',
         'discount-codes:update',
         'discount-codes:delete',
-        'discount-codes:validate',
-        'discount-codes:search',
         
         // Payment Methods
         'payment-methods:create',
         'payment-methods:read',
         'payment-methods:update',
         'payment-methods:delete',
-        'payment-methods:search',
         
         // Payments
         'payments:create',
         'payments:read',
         'payments:update',
         'payments:delete',
-        'payments:search',
-        'payments:reports',
         
         // Refunds
         'refunds:create',
         'refunds:read',
         'refunds:update',
         'refunds:delete',
-        'refunds:search',
-        'refunds:reports',
         
         // Expenses
         'expenses:create',
         'expenses:read',
         'expenses:update',
         'expenses:delete',
-        'expenses:search',
-        'expenses:reports',
         
         // Payroll
         'payroll:create',
         'payroll:read',
         'payroll:update',
         'payroll:delete',
-        'payroll:search',
-        'payroll:reports',
         
         // System
         'bootstrap:seed',
@@ -210,8 +195,8 @@ export class BootstrapService {
       }
 
       // Seed sample data
-      console.log('📊 Seeding sample data...');
-      await this.seedSampleData();
+      console.log('📊 Skipping sample data seeding to avoid dependency issues');
+      // await this.seedSampleData();
 
       console.log('🎉 Bootstrap seeding completed successfully!');
       console.log('');
@@ -316,33 +301,30 @@ export class BootstrapService {
       const batches = [
         {
           course_id: createdCourses[0]?.id,
-          trainer_id: adminUser.id,
           name: 'WEB-2025-Q1',
           description: 'Web Development Q1 2025 batch',
           start_date: new Date('2025-01-15'),
           end_date: new Date('2025-04-15'),
           capacity: 25,
-          status: 'open',
+          is_active: true,
         },
         {
           course_id: createdCourses[1]?.id,
-          trainer_id: adminUser.id,
           name: 'REACT-2025-Q1',
           description: 'React.js Q1 2025 batch',
           start_date: new Date('2025-02-01'),
           end_date: new Date('2025-04-01'),
           capacity: 20,
-          status: 'open',
+          is_active: true,
         },
         {
           course_id: createdCourses[2]?.id,
-          trainer_id: adminUser.id,
           name: 'NODE-2025-Q1',
           description: 'Node.js Q1 2025 batch',
           start_date: new Date('2025-02-15'),
           end_date: new Date('2025-05-15'),
           capacity: 20,
-          status: 'open',
+          is_active: true,
         },
       ];
 
@@ -365,27 +347,28 @@ export class BootstrapService {
       const discountCodes = [
         {
           code: 'WELCOME2025',
-          user_id: adminUser.id,
-          name: 'Welcome Discount 2025',
-          purpose: 'Welcome discount for new students',
-          percent: 10,
+          description: 'Welcome discount for new students',
+          discount_type: 'percentage',
+          discount_value: 10.00,
+          min_amount: 100.00,
+          max_discount: 50.00,
+          start_date: new Date('2025-01-01'),
+          end_date: new Date('2025-12-31'),
           usage_limit: 100,
-          used_count: 0,
-          valid_from: new Date('2025-01-01'),
-          valid_to: new Date('2025-12-31'),
-          active: true,
+          usage_count: 0,
+          is_active: true,
         },
         {
           code: 'EARLY50',
-          user_id: adminUser.id,
-          name: 'Early Bird Discount',
-          purpose: 'Early bird discount for early enrollment',
-          amount: 50.00,
+          description: 'Early bird discount',
+          discount_type: 'fixed',
+          discount_value: 50.00,
+          min_amount: 200.00,
+          start_date: new Date('2025-01-01'),
+          end_date: new Date('2025-03-31'),
           usage_limit: 50,
-          used_count: 0,
-          valid_from: new Date('2025-01-01'),
-          valid_to: new Date('2025-03-31'),
-          active: true,
+          usage_count: 0,
+          is_active: true,
         },
       ];
 
@@ -463,7 +446,6 @@ export class BootstrapService {
           {
             student_id: createdStudents[0]?.id,
             batch_id: createdBatches[0]?.id,
-            user_id: adminUser.id,
             enrollment_date: new Date('2025-01-10'),
             status: 'active',
             notes: 'Regular enrollment',
@@ -471,7 +453,6 @@ export class BootstrapService {
           {
             student_id: createdStudents[1]?.id,
             batch_id: createdBatches[1]?.id,
-            user_id: adminUser.id,
             enrollment_date: new Date('2025-01-25'),
             status: 'active',
             notes: 'Early bird enrollment',
@@ -479,7 +460,6 @@ export class BootstrapService {
           {
             student_id: createdStudents[2]?.id,
             batch_id: createdBatches[2]?.id,
-            user_id: adminUser.id,
             enrollment_date: new Date('2025-02-10'),
             status: 'active',
             notes: 'Scholarship student',
@@ -547,95 +527,6 @@ export class BootstrapService {
         }
       }
       console.log(`✅ Seeded ${userCount} sample users`);
-
-      console.log('💰 Seeding sample expenses...');
-      // Seed sample expenses
-      const expenses = [
-        {
-          user_id: adminUser.id,
-          beneficiary: 'Office Supplies Store',
-          project_type: 'online',
-          category: 'equipment',
-          description: 'Monthly office supplies and materials',
-          amount: 250000.00,
-          currency: 'IQD',
-          expense_date: new Date('2025-01-15'),
-        },
-        {
-          user_id: adminUser.id,
-          beneficiary: 'Marketing Agency',
-          project_type: 'online',
-          category: 'marketing',
-          description: 'Social media advertising campaign',
-          amount: 500000.00,
-          currency: 'IQD',
-          expense_date: new Date('2025-01-20'),
-        },
-        {
-          user_id: adminUser.id,
-          beneficiary: 'Trainer Name',
-          project_type: 'kids',
-          category: 'salary',
-          description: 'Monthly trainer salary',
-          amount: 1200000.00,
-          currency: 'IQD',
-          expense_date: new Date('2025-01-31'),
-        },
-      ];
-
-      let expenseCount = 0;
-      for (const expense of expenses) {
-        const existing = await this.expenseRepo.findOne({
-          where: {
-            beneficiary: expense.beneficiary,
-            expense_date: expense.expense_date,
-          },
-        });
-        if (!existing) {
-          await this.expenseRepo.save(this.expenseRepo.create(expense));
-          expenseCount++;
-        }
-      }
-      console.log(`✅ Seeded ${expenseCount} expenses`);
-
-      console.log('💼 Seeding sample payroll...');
-      // Seed sample payroll records
-      const payrollRecords = [
-        {
-          user_id: adminUser.id,
-          amount: 1500000.00,
-          currency: 'IQD',
-          period_start: new Date('2025-01-01'),
-          period_end: new Date('2025-01-31'),
-          paid_at: new Date('2025-02-01'),
-          note: 'January 2025 salary',
-        },
-        {
-          user_id: adminUser.id,
-          amount: 1500000.00,
-          currency: 'IQD',
-          period_start: new Date('2025-02-01'),
-          period_end: new Date('2025-02-28'),
-          paid_at: undefined,
-          note: 'February 2025 salary - pending payment',
-        },
-      ];
-
-      let payrollCount = 0;
-      for (const payroll of payrollRecords) {
-        const existing = await this.payrollRepo.findOne({
-          where: {
-            user_id: payroll.user_id,
-            period_start: payroll.period_start,
-            period_end: payroll.period_end,
-          },
-        });
-        if (!existing) {
-          await this.payrollRepo.save(this.payrollRepo.create(payroll));
-          payrollCount++;
-        }
-      }
-      console.log(`✅ Seeded ${payrollCount} payroll records`);
 
       console.log('✅ Sample data seeded successfully');
     } catch (error) {

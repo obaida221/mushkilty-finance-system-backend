@@ -47,31 +47,4 @@ export class BatchService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
-
-  async findByCourse(courseId: number): Promise<Batch[]> {
-    return this.repository.find({
-      where: { course_id: courseId },
-      relations: ['enrollments'],
-      order: { start_date: 'ASC' }
-    });
-  }
-
-  async findByName(name: string): Promise<Batch[]> {
-    return this.repository.find({
-      where: { name },
-      relations: ['course'],
-      order: { created_at: 'DESC' }
-    });
-  }
-
-  async findActiveBatches(): Promise<Batch[]> {
-    const currentDate = new Date();
-    return this.repository
-      .createQueryBuilder('batch')
-      .leftJoinAndSelect('batch.course', 'course')
-      .where('batch.start_date <= :currentDate', { currentDate })
-      .andWhere('batch.end_date >= :currentDate', { currentDate })
-      .orderBy('batch.start_date', 'ASC')
-      .getMany();
-  }
 }

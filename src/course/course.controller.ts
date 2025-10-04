@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -40,23 +39,6 @@ export class CourseController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('search/project-type')
-  @Permissions('courses:read')
-  @ApiOperation({ summary: 'Find courses by project type' })
-  @ApiQuery({ name: 'type', required: true, description: 'Project type' })
-  @ApiResponse({ status: 200, description: 'Return courses with the specified project type.' })
-  findByProjectType(@Query('type') projectType: string) {
-    return this.service.findByProjectType(projectType);
-  }
-
-  @Get('search/user/:userId')
-  @Permissions('courses:read')
-  @ApiOperation({ summary: 'Find courses by user' })
-  @ApiResponse({ status: 200, description: 'Return courses created by the user.' })
-  findByUser(@Param('userId') userId: string) {
-    return this.service.findByUser(+userId);
   }
 
   @Get(':id')

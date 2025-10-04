@@ -46,15 +46,4 @@ export class StudentService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
-
-  async findByPhone(phone: string): Promise<Student | null> {
-    return this.repository.findOne({ where: { phone } });
-  }
-
-  async findByStatus(status: string): Promise<Student[]> {
-    return this.repository.find({ 
-      where: { status },
-      order: { created_at: 'DESC' }
-    });
-  }
 }

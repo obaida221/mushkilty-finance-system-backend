@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RefundService } from './refund.service';
 import { CreateRefundDto } from './dto/create-refund.dto';
 import { UpdateRefundDto } from './dto/update-refund.dto';
@@ -40,42 +39,6 @@ export class RefundController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('search/payment/:paymentId')
-  @Permissions('refunds:read')
-  @ApiOperation({ summary: 'Find refunds by payment' })
-  @ApiResponse({ status: 200, description: 'Return refunds for the specified payment.' })
-  findByPayment(@Param('paymentId') paymentId: string) {
-    return this.service.findByPayment(+paymentId);
-  }
-
-  @Get('search/date-range')
-  @Permissions('refunds:read')
-  @ApiOperation({ summary: 'Find refunds by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return refunds within the specified date range.' })
-  findByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.findByDateRange(new Date(startDate), new Date(endDate));
-  }
-
-  @Get('totals/payment/:paymentId')
-  @Permissions('refunds:read')
-  @ApiOperation({ summary: 'Get total refunds by payment' })
-  @ApiResponse({ status: 200, description: 'Return total refunds for the payment.' })
-  getTotalRefundsByPayment(@Param('paymentId') paymentId: string) {
-    return this.service.getTotalRefundsByPayment(+paymentId);
-  }
-
-  @Get('totals/date-range')
-  @Permissions('refunds:read')
-  @ApiOperation({ summary: 'Get total refunds by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return total refunds within the date range.' })
-  getTotalRefundsByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.getTotalRefundsByDateRange(new Date(startDate), new Date(endDate));
   }
 
   @Get(':id')

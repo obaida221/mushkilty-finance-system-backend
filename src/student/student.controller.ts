@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -40,24 +39,6 @@ export class StudentController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('search/phone/:phone')
-  @Permissions('students:search')
-  @ApiOperation({ summary: 'Find student by phone number' })
-  @ApiResponse({ status: 200, description: 'Return the student.' })
-  @ApiResponse({ status: 404, description: 'Student not found.' })
-  findByPhone(@Param('phone') phone: string) {
-    return this.service.findByPhone(phone);
-  }
-
-  @Get('search/status')
-  @Permissions('students:search')
-  @ApiOperation({ summary: 'Find students by status' })
-  @ApiQuery({ name: 'status', required: true, description: 'Student status' })
-  @ApiResponse({ status: 200, description: 'Return students with the specified status.' })
-  findByStatus(@Query('status') status: string) {
-    return this.service.findByStatus(status);
   }
 
   @Get(':id')

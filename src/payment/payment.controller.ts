@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -40,50 +39,6 @@ export class PaymentController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('search/student/:studentId')
-  @Permissions('payments:read')
-  @ApiOperation({ summary: 'Find payments by student' })
-  @ApiResponse({ status: 200, description: 'Return payments for the specified student.' })
-  findByStudent(@Param('studentId') studentId: string) {
-    return this.service.findByStudent(+studentId);
-  }
-
-  @Get('search/payment-method/:paymentMethodId')
-  @Permissions('payments:read')
-  @ApiOperation({ summary: 'Find payments by payment method' })
-  @ApiResponse({ status: 200, description: 'Return payments for the specified payment method.' })
-  findByPaymentMethod(@Param('paymentMethodId') paymentMethodId: string) {
-    return this.service.findByPaymentMethod(+paymentMethodId);
-  }
-
-  @Get('search/date-range')
-  @Permissions('payments:read')
-  @ApiOperation({ summary: 'Find payments by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return payments within the specified date range.' })
-  findByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.findByDateRange(new Date(startDate), new Date(endDate));
-  }
-
-  @Get('totals/student/:studentId')
-  @Permissions('payments:read')
-  @ApiOperation({ summary: 'Get total payments by student' })
-  @ApiResponse({ status: 200, description: 'Return total payments for the student.' })
-  getTotalPaymentsByStudent(@Param('studentId') studentId: string) {
-    return this.service.getTotalPaymentsByStudent(+studentId);
-  }
-
-  @Get('totals/date-range')
-  @Permissions('payments:read')
-  @ApiOperation({ summary: 'Get total payments by date range' })
-  @ApiQuery({ name: 'startDate', required: true, description: 'Start date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'endDate', required: true, description: 'End date (YYYY-MM-DD)' })
-  @ApiResponse({ status: 200, description: 'Return total payments within the date range.' })
-  getTotalPaymentsByDateRange(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
-    return this.service.getTotalPaymentsByDateRange(new Date(startDate), new Date(endDate));
   }
 
   @Get(':id')

@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
@@ -40,39 +39,6 @@ export class EnrollmentController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('active')
-  @Permissions('enrollments:read')
-  @ApiOperation({ summary: 'Get all active enrollments' })
-  @ApiResponse({ status: 200, description: 'Return all active enrollments.' })
-  findActiveEnrollments() {
-    return this.service.findActiveEnrollments();
-  }
-
-  @Get('search/student/:studentId')
-  @Permissions('enrollments:read')
-  @ApiOperation({ summary: 'Find enrollments by student' })
-  @ApiResponse({ status: 200, description: 'Return enrollments for the specified student.' })
-  findByStudent(@Param('studentId') studentId: string) {
-    return this.service.findByStudent(+studentId);
-  }
-
-  @Get('search/batch/:batchId')
-  @Permissions('enrollments:read')
-  @ApiOperation({ summary: 'Find enrollments by batch' })
-  @ApiResponse({ status: 200, description: 'Return enrollments for the specified batch.' })
-  findByBatch(@Param('batchId') batchId: string) {
-    return this.service.findByBatch(+batchId);
-  }
-
-  @Get('search/status')
-  @Permissions('enrollments:read')
-  @ApiOperation({ summary: 'Find enrollments by status' })
-  @ApiQuery({ name: 'status', required: true, description: 'Enrollment status' })
-  @ApiResponse({ status: 200, description: 'Return enrollments with the specified status.' })
-  findByStatus(@Query('status') status: string) {
-    return this.service.findByStatus(status);
   }
 
   @Get(':id')

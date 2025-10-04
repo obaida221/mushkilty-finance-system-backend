@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PaymentMethodService } from './payment-method.service';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
@@ -40,23 +39,6 @@ export class PaymentMethodController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.service.findAll();
-  }
-
-  @Get('active')
-  @Permissions('payment-methods:read')
-  @ApiOperation({ summary: 'Get all active payment methods' })
-  @ApiResponse({ status: 200, description: 'Return all active payment methods.' })
-  findActivePaymentMethods() {
-    return this.service.findActivePaymentMethods();
-  }
-
-  @Get('search/name/:name')
-  @Permissions('payment-methods:read')
-  @ApiOperation({ summary: 'Find payment method by name' })
-  @ApiResponse({ status: 200, description: 'Return the payment method.' })
-  @ApiResponse({ status: 404, description: 'Payment method not found.' })
-  findByName(@Param('name') name: string) {
-    return this.service.findByName(name);
   }
 
   @Get(':id')
