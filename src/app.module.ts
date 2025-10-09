@@ -19,6 +19,7 @@ import { PaymentModule } from './payment/payment.module';
 import { RefundModule } from './refund/refund.module';
 import { ExpenseModule } from './expense/expense.module';
 import { PayrollModule } from './payroll/payroll.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { PayrollModule } from './payroll/payroll.module';
     RefundModule,
     ExpenseModule,
     PayrollModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

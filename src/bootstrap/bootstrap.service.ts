@@ -117,6 +117,10 @@ export class BootstrapService {
         'payroll:update',
         'payroll:delete',
         
+        // Dashboard
+        'dashboard:read',
+        'dashboard:analytics',
+        
         // System
         'bootstrap:seed',
         'system:admin',
