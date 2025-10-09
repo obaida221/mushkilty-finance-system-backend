@@ -1,28 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Payment } from '../payment/entities/payment.entity';
-import { Expense } from '../expense/entities/expense.entity';
-import { Enrollment } from '../enrollment/entities/enrollment.entity';
-import { Course } from '../course/entities/course.entity';
-import { Student } from '../student/entities/student.entity';
-import { PaymentMethod } from '../payment-method/entities/payment-method.entity';
+import { PaymentService } from '../payment/payment.service';
+import { ExpenseService } from '../expense/expense.service';
+import { EnrollmentService } from '../enrollment/enrollment.service';
+import { CourseService } from '../course/course.service';
+import { StudentService } from '../student/student.service';
+import { PaymentMethodService } from '../payment-method/payment-method.service';
 
 @Injectable()
 export class DashboardService {
   constructor(
-    @InjectRepository(Payment)
-    private paymentRepository: Repository<Payment>,
-    @InjectRepository(Expense)
-    private expenseRepository: Repository<Expense>,
-    @InjectRepository(Enrollment)
-    private enrollmentRepository: Repository<Enrollment>,
-    @InjectRepository(Course)
-    private courseRepository: Repository<Course>,
-    @InjectRepository(Student)
-    private studentRepository: Repository<Student>,
-    @InjectRepository(PaymentMethod)
-    private paymentMethodRepository: Repository<PaymentMethod>,
+    private readonly paymentService: PaymentService,
+    private readonly expenseService: ExpenseService,
+    private readonly enrollmentService: EnrollmentService,
+    private readonly courseService: CourseService,
+    private readonly studentService: StudentService,
+    private readonly paymentMethodService: PaymentMethodService,
   ) {}
 
   async getStats() {
@@ -33,60 +25,19 @@ export class DashboardService {
     const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
     // Get current month totals
-    const currentMonthIncome = await this.paymentRepository
-      .createQueryBuilder('payment')
-      .select('SUM(payment.amount)', 'total')
-      .where('EXTRACT(YEAR FROM payment.paid_at) = :year', { year: currentYear })
-      .andWhere('EXTRACT(MONTH FROM payment.paid_at) = :month', { month: currentMonth })
-      .getRawOne();
-
-    const currentMonthExpenses = await this.expenseRepository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('EXTRACT(YEAR FROM expense.expense_date) = :year', { year: currentYear })
-      .andWhere('EXTRACT(MONTH FROM expense.expense_date) = :month', { month: currentMonth })
-      .getRawOne();
+    const totalIncome = await this.paymentService.getTotalByMonth(currentYear, currentMonth);
+    const totalExpenses = await this.expenseService.getTotalByMonth(currentYear, currentMonth);
 
     // Get last month totals for comparison
-    const lastMonthIncome = await this.paymentRepository
-      .createQueryBuilder('payment')
-      .select('SUM(payment.amount)', 'total')
-      .where('EXTRACT(YEAR FROM payment.paid_at) = :year', { year: lastMonthYear })
-      .andWhere('EXTRACT(MONTH FROM payment.paid_at) = :month', { month: lastMonth })
-      .getRawOne();
+    const prevIncome = await this.paymentService.getTotalByMonth(lastMonthYear, lastMonth);
+    const prevExpenses = await this.expenseService.getTotalByMonth(lastMonthYear, lastMonth);
 
-    const lastMonthExpenses = await this.expenseRepository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('EXTRACT(YEAR FROM expense.expense_date) = :year', { year: lastMonthYear })
-      .andWhere('EXTRACT(MONTH FROM expense.expense_date) = :month', { month: lastMonth })
-      .getRawOne();
+    // Get active students
+    const currentStudents = await this.enrollmentService.getActiveStudentsCount();
+    const prevStudents = await this.enrollmentService.getActiveStudentsCountByMonth(lastMonthYear, lastMonth);
 
-    // Get active students (students with active enrollments)
-    const activeStudents = await this.enrollmentRepository
-      .createQueryBuilder('enrollment')
-      .select('COUNT(DISTINCT enrollment.student_id)', 'count')
-      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
-      .getRawOne();
-
-    const lastMonthActiveStudents = await this.enrollmentRepository
-      .createQueryBuilder('enrollment')
-      .select('COUNT(DISTINCT enrollment.student_id)', 'count')
-      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
-      .andWhere('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year: lastMonthYear })
-      .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month: lastMonth })
-      .getRawOne();
-
-    const totalIncome = parseFloat(currentMonthIncome?.total || 0);
-    const totalExpenses = parseFloat(currentMonthExpenses?.total || 0);
     const netProfit = totalIncome - totalExpenses;
-
-    const prevIncome = parseFloat(lastMonthIncome?.total || 0);
-    const prevExpenses = parseFloat(lastMonthExpenses?.total || 0);
     const prevProfit = prevIncome - prevExpenses;
-
-    const currentStudents = parseInt(activeStudents?.count || 0);
-    const prevStudents = parseInt(lastMonthActiveStudents?.count || 0);
 
     // Calculate percentage changes
     const incomeChange = prevIncome > 0 ? ((totalIncome - prevIncome) / prevIncome * 100).toFixed(1) : '0.0';
@@ -107,128 +58,27 @@ export class DashboardService {
   }
 
   async getRevenueChart(months: number = 6) {
-    const monthNames = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-    ];
+    const incomeData = await this.paymentService.getRevenueChartData(months);
+    const expenseData = await this.expenseService.getExpenseChartData(months);
 
-    const result: Array<{month: string, income: number, expenses: number}> = [];
-    const currentDate = new Date();
-
-    for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-
-      const income = await this.paymentRepository
-        .createQueryBuilder('payment')
-        .select('SUM(payment.amount)', 'total')
-        .where('EXTRACT(YEAR FROM payment.paid_at) = :year', { year })
-        .andWhere('EXTRACT(MONTH FROM payment.paid_at) = :month', { month })
-        .getRawOne();
-
-      const expenses = await this.expenseRepository
-        .createQueryBuilder('expense')
-        .select('SUM(expense.amount)', 'total')
-        .where('EXTRACT(YEAR FROM expense.expense_date) = :year', { year })
-        .andWhere('EXTRACT(MONTH FROM expense.expense_date) = :month', { month })
-        .getRawOne();
-
-      result.push({
-        month: monthNames[date.getMonth()],
-        income: parseFloat(income?.total || 0),
-        expenses: parseFloat(expenses?.total || 0),
-      });
-    }
-
-    return result;
+    // Combine income and expense data
+    return incomeData.map((income, index) => ({
+      month: income.month,
+      income: income.income,
+      expenses: expenseData[index]?.expenses || 0,
+    }));
   }
 
   async getStudentEnrollmentChart(months: number = 6) {
-    const monthNames = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-    ];
-
-    const result: Array<{month: string, students: number}> = [];
-    const currentDate = new Date();
-
-    for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-
-      const enrollments = await this.enrollmentRepository
-        .createQueryBuilder('enrollment')
-        .select('COUNT(*)', 'count')
-        .where('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year })
-        .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month })
-        .getRawOne();
-
-      result.push({
-        month: monthNames[date.getMonth()],
-        students: parseInt(enrollments?.count || 0),
-      });
-    }
-
-    return result;
+    return this.enrollmentService.getEnrollmentChartData(months);
   }
 
   async getCourseDistributionChart() {
-    const colors = {
-      'online': '#DC2626',
-      'onsite': '#F59E0B',
-      'kids': '#10B981',
-      'ielts': '#3B82F6',
-    };
-
-    const arabicNames = {
-      'online': 'أونلاين',
-      'onsite': 'حضوري',
-      'kids': 'كيدز',
-      'ielts': 'آيلتس',
-    };
-
-    const distribution = await this.courseRepository
-      .createQueryBuilder('course')
-      .select('course.project_type', 'type')
-      .addSelect('COUNT(*)', 'count')
-      .where('course.project_type IS NOT NULL')
-      .groupBy('course.project_type')
-      .getRawMany();
-
-    return distribution.map(item => ({
-      name: arabicNames[item.type] || item.type,
-      value: parseInt(item.count),
-      color: colors[item.type] || '#6B7280',
-    }));
+    return this.courseService.getCourseDistribution();
   }
 
   async getPaymentMethodChart(months: number = 6) {
-    const arabicNames = {
-      'cash': 'نقدي',
-      'card': 'ماستر',
-      'transfer': 'زين كاش',
-      'bank': 'آسيا حوالة',
-    };
-
-    const currentDate = new Date();
-    const fromDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - months + 1, 1);
-
-    const paymentMethods = await this.paymentRepository
-      .createQueryBuilder('payment')
-      .leftJoin('payment.paymentMethod', 'paymentMethod')
-      .select('paymentMethod.name', 'method')
-      .addSelect('SUM(payment.amount)', 'total')
-      .where('payment.paid_at >= :fromDate', { fromDate })
-      .groupBy('paymentMethod.name')
-      .orderBy('total', 'DESC')
-      .getRawMany();
-
-    return paymentMethods.map(item => ({
-      method: arabicNames[item.method] || item.method || 'غير محدد',
-      amount: parseFloat(item.total || 0),
-    }));
+    return this.paymentService.getPaymentMethodDistribution(months);
   }
 
   async getFinancialSummary(year: number) {
@@ -236,120 +86,41 @@ export class DashboardService {
     const yearEnd = new Date(year, 11, 31, 23, 59, 59);
 
     // Total income and expenses for the year
-    const totalIncome = await this.paymentRepository
-      .createQueryBuilder('payment')
-      .select('SUM(payment.amount)', 'total')
-      .where('payment.paid_at BETWEEN :start AND :end', { start: yearStart, end: yearEnd })
-      .getRawOne();
-
-    const totalExpenses = await this.expenseRepository
-      .createQueryBuilder('expense')
-      .select('SUM(expense.amount)', 'total')
-      .where('expense.expense_date BETWEEN :start AND :end', { start: yearStart, end: yearEnd })
-      .getRawOne();
+    const totalIncome = await this.paymentService.getTotalByDateRange(yearStart, yearEnd);
+    const totalExpenses = await this.expenseService.getTotalByDateRange(yearStart, yearEnd);
 
     // Monthly breakdown
     const monthlyBreakdown: Array<{month: number, income: number, expenses: number, profit: number}> = [];
-    for (let month = 0; month < 12; month++) {
-      const monthStart = new Date(year, month, 1);
-      const monthEnd = new Date(year, month + 1, 0, 23, 59, 59);
-
-      const monthIncome = await this.paymentRepository
-        .createQueryBuilder('payment')
-        .select('SUM(payment.amount)', 'total')
-        .where('payment.paid_at BETWEEN :start AND :end', { start: monthStart, end: monthEnd })
-        .getRawOne();
-
-      const monthExpenses = await this.expenseRepository
-        .createQueryBuilder('expense')
-        .select('SUM(expense.amount)', 'total')
-        .where('expense.expense_date BETWEEN :start AND :end', { start: monthStart, end: monthEnd })
-        .getRawOne();
+    for (let month = 1; month <= 12; month++) {
+      const monthIncome = await this.paymentService.getTotalByMonth(year, month);
+      const monthExpenses = await this.expenseService.getTotalByMonth(year, month);
 
       monthlyBreakdown.push({
-        month: month + 1,
-        income: parseFloat(monthIncome?.total || 0),
-        expenses: parseFloat(monthExpenses?.total || 0),
-        profit: parseFloat(monthIncome?.total || 0) - parseFloat(monthExpenses?.total || 0),
+        month,
+        income: monthIncome,
+        expenses: monthExpenses,
+        profit: monthIncome - monthExpenses,
       });
     }
 
     // Expense categories breakdown
-    const expenseCategories = await this.expenseRepository
-      .createQueryBuilder('expense')
-      .select('expense.category', 'category')
-      .addSelect('SUM(expense.amount)', 'total')
-      .where('expense.expense_date BETWEEN :start AND :end', { start: yearStart, end: yearEnd })
-      .andWhere('expense.category IS NOT NULL')
-      .groupBy('expense.category')
-      .orderBy('total', 'DESC')
-      .getRawMany();
+    const expenseCategories = await this.expenseService.getCategoryBreakdown(year);
 
     return {
       year,
-      totalIncome: parseFloat(totalIncome?.total || 0),
-      totalExpenses: parseFloat(totalExpenses?.total || 0),
-      netProfit: parseFloat(totalIncome?.total || 0) - parseFloat(totalExpenses?.total || 0),
+      totalIncome,
+      totalExpenses,
+      netProfit: totalIncome - totalExpenses,
       monthlyBreakdown,
-      expenseCategories: expenseCategories.map(cat => ({
-        category: cat.category,
-        amount: parseFloat(cat.total),
-      })),
+      expenseCategories,
     };
   }
 
   async getRecentActivities(limit: number = 10) {
-    // Recent payments
-    const recentPayments = await this.paymentRepository
-      .createQueryBuilder('payment')
-      .leftJoinAndSelect('payment.enrollment', 'enrollment')
-      .leftJoinAndSelect('enrollment.student', 'student')
-      .leftJoinAndSelect('payment.paymentMethod', 'paymentMethod')
-      .select([
-        'payment.id',
-        'payment.amount',
-        'payment.currency',
-        'payment.paid_at',
-        'payment.payer',
-        'student.name',
-        'paymentMethod.name'
-      ])
-      .orderBy('payment.paid_at', 'DESC')
-      .limit(Math.ceil(limit / 2))
-      .getMany();
-
-    // Recent enrollments
-    const recentEnrollments = await this.enrollmentRepository
-      .createQueryBuilder('enrollment')
-      .leftJoinAndSelect('enrollment.student', 'student')
-      .leftJoinAndSelect('enrollment.batch', 'batch')
-      .leftJoinAndSelect('batch.course', 'course')
-      .select([
-        'enrollment.id',
-        'enrollment.enrolled_at',
-        'enrollment.status',
-        'student.name',
-        'course.name',
-        'batch.name'
-      ])
-      .orderBy('enrollment.enrolled_at', 'DESC')
-      .limit(Math.ceil(limit / 2))
-      .getMany();
-
-    // Recent expenses
-    const recentExpenses = await this.expenseRepository
-      .createQueryBuilder('expense')
-      .select([
-        'expense.id',
-        'expense.beneficiary',
-        'expense.amount',
-        'expense.currency',
-        'expense.category',
-        'expense.expense_date'
-      ])
-      .orderBy('expense.expense_date', 'DESC')
-      .limit(Math.ceil(limit / 3))
-      .getMany();
+    // Get recent data from each service
+    const recentPayments = await this.paymentService.getRecentPayments(Math.ceil(limit / 2));
+    const recentEnrollments = await this.enrollmentService.getRecentEnrollments(Math.ceil(limit / 2));
+    const recentExpenses = await this.expenseService.getRecentExpenses(Math.ceil(limit / 3));
 
     // Combine and sort all activities
     const activities = [

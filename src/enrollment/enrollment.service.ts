@@ -47,4 +47,65 @@ export class EnrollmentService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
+
+  // Dashboard specific methods
+  async getActiveStudentsCount(): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder('enrollment')
+      .select('COUNT(DISTINCT enrollment.student_id)', 'count')
+      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
+      .getRawOne();
+    
+    return parseInt(result?.count || 0);
+  }
+
+  async getActiveStudentsCountByMonth(year: number, month: number): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder('enrollment')
+      .select('COUNT(DISTINCT enrollment.student_id)', 'count')
+      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
+      .andWhere('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year })
+      .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month })
+      .getRawOne();
+    
+    return parseInt(result?.count || 0);
+  }
+
+  async getEnrollmentChartData(months: number = 6): Promise<Array<{month: string, students: number}>> {
+    const monthNames = [
+      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    ];
+
+    const result: Array<{month: string, students: number}> = [];
+    const currentDate = new Date();
+
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+
+      const enrollments = await this.repository
+        .createQueryBuilder('enrollment')
+        .select('COUNT(*)', 'count')
+        .where('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year })
+        .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month })
+        .getRawOne();
+
+      result.push({
+        month: monthNames[date.getMonth()],
+        students: parseInt(enrollments?.count || 0),
+      });
+    }
+
+    return result;
+  }
+
+  async getRecentEnrollments(limit: number = 5): Promise<Enrollment[]> {
+    return this.repository.find({
+      relations: ['student', 'batch', 'batch.course'],
+      order: { enrolled_at: 'DESC' },
+      take: limit,
+    });
+  }
 }

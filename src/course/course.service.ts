@@ -47,4 +47,35 @@ export class CourseService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
+
+  // Dashboard specific methods
+  async getCourseDistribution(): Promise<Array<{name: string, value: number, color: string}>> {
+    const colors = {
+      'online': '#DC2626',
+      'onsite': '#F59E0B',
+      'kids': '#10B981',
+      'ielts': '#3B82F6',
+    };
+
+    const arabicNames = {
+      'online': 'أونلاين',
+      'onsite': 'حضوري',
+      'kids': 'كيدز',
+      'ielts': 'آيلتس',
+    };
+
+    const distribution = await this.repository
+      .createQueryBuilder('course')
+      .select('course.project_type', 'type')
+      .addSelect('COUNT(*)', 'count')
+      .where('course.project_type IS NOT NULL')
+      .groupBy('course.project_type')
+      .getRawMany();
+
+    return distribution.map(item => ({
+      name: arabicNames[item.type] || item.type,
+      value: parseInt(item.count),
+      color: colors[item.type] || '#6B7280',
+    }));
+  }
 }

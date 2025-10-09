@@ -47,4 +47,79 @@ export class ExpenseService {
     const entity = await this.findOne(id);
     await this.repository.delete(id);
   }
+
+  // Dashboard specific methods
+  async getTotalByDateRange(startDate: Date, endDate: Date): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder('expense')
+      .select('SUM(expense.amount)', 'total')
+      .where('expense.expense_date BETWEEN :start AND :end', { start: startDate, end: endDate })
+      .getRawOne();
+    
+    return parseFloat(result?.total || 0);
+  }
+
+  async getTotalByMonth(year: number, month: number): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder('expense')
+      .select('SUM(expense.amount)', 'total')
+      .where('EXTRACT(YEAR FROM expense.expense_date) = :year', { year })
+      .andWhere('EXTRACT(MONTH FROM expense.expense_date) = :month', { month })
+      .getRawOne();
+    
+    return parseFloat(result?.total || 0);
+  }
+
+  async getExpenseChartData(months: number = 6): Promise<Array<{month: string, expenses: number}>> {
+    const monthNames = [
+      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    ];
+
+    const result: Array<{month: string, expenses: number}> = [];
+    const currentDate = new Date();
+
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+
+      const expenses = await this.getTotalByMonth(year, month);
+
+      result.push({
+        month: monthNames[date.getMonth()],
+        expenses,
+      });
+    }
+
+    return result;
+  }
+
+  async getCategoryBreakdown(year: number): Promise<Array<{category: string, amount: number}>> {
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year, 11, 31, 23, 59, 59);
+
+    const categories = await this.repository
+      .createQueryBuilder('expense')
+      .select('expense.category', 'category')
+      .addSelect('SUM(expense.amount)', 'total')
+      .where('expense.expense_date BETWEEN :start AND :end', { start: yearStart, end: yearEnd })
+      .andWhere('expense.category IS NOT NULL')
+      .groupBy('expense.category')
+      .orderBy('total', 'DESC')
+      .getRawMany();
+
+    return categories.map(cat => ({
+      category: cat.category,
+      amount: parseFloat(cat.total),
+    }));
+  }
+
+  async getRecentExpenses(limit: number = 5): Promise<Expense[]> {
+    return this.repository.find({
+      relations: ['user'],
+      order: { expense_date: 'DESC' },
+      take: limit,
+    });
+  }
 }
