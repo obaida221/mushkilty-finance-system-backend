@@ -1,7 +1,6 @@
 // src/permissions/permissions.controller.ts
 import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto } from './dto/create-permission.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { Permissions } from '../auth/decorators/permissions.decorator';
@@ -20,11 +19,6 @@ export class PermissionsController {
     return this.service.findAll();
   }
 
-  @Post()
-  @Permissions('permissions:create')
-  create(@Body() dto: CreatePermissionDto) {
-    return this.service.create(dto);
-  }
 
   @Post('seed')
   @Permissions('permissions:update')
