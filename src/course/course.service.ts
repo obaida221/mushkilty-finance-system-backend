@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
@@ -45,6 +45,21 @@ export class CourseService {
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+    
+    // Check for related batches
+    const batchesCount = await this.repository
+      .createQueryBuilder('course')
+      .leftJoin('course.batches', 'batch')
+      .select('COUNT(batch.id)', 'count')
+      .where('course.id = :id', { id })
+      .getRawOne();
+
+    if (parseInt(batchesCount.count) > 0) {
+      throw new BadRequestException(
+        `Cannot delete course. There are ${batchesCount.count} batch(es) associated with this course. Please remove all batches first.`
+      );
+    }
+
     await this.repository.delete(id);
   }
 
