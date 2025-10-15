@@ -1,12 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsBoolean, 
-  IsIn,
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsBoolean,
+  // IsIn,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreatePaymentMethodDto {
@@ -14,10 +14,10 @@ export class CreatePaymentMethodDto {
   @IsInt()
   user_id: number;
 
-  @ApiProperty({ example: 'card', description: 'cash|card|transfer' })
+  @ApiProperty({ example: 'card', description: 'cash|card|transfer...' })
   @IsString()
   @IsNotEmpty()
-  @IsIn(['cash', 'card', 'transfer'])
+  // @IsIn(['cash', 'card', 'transfer'])
   name: string;
 
   @ApiPropertyOptional({ example: '1234-5678-9012-3456' })

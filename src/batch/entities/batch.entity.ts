@@ -37,11 +37,11 @@ export class Batch {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 10, 
+  @Column({
+    type: 'varchar',
+    length: 10,
     nullable: true,
-    comment: 'A1, A2, B1, B2, C1'
+    comment: 'A1, A2, B1, B2, C1',
   })
   level: string;
 
@@ -54,26 +54,34 @@ export class Batch {
   @Column({ type: 'date', nullable: true })
   end_date: Date;
 
-  @Column({ 
-    type: 'text', 
+  @Column({
+    type: 'text',
     nullable: true,
-    comment: 'every monday, wednesday, friday at 3pm'
+    comment: 'every monday, wednesday, friday at 3pm',
   })
   schedule: string;
 
   @Column({ type: 'int', nullable: true })
   capacity: number;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
+  @Column({
+    type: 'varchar',
+    length: 50,
     default: 'open',
-    comment: 'open, closed, full'
+    comment: 'open, closed, full',
   })
   status: string;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   actual_price: number;
+
+  @Column({
+    type: 'varchar',
+    length: 10,
+    default: 'IQD',
+    comment: 'USD|IQD',
+  })
+  currency: string;
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.batch)
   enrollments: Enrollment[];

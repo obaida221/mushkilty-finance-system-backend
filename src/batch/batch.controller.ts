@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { BatchService } from './batch.service';
 import { CreateBatchDto } from './dto/create-batch.dto';
 import { UpdateBatchDto } from './dto/update-batch.dto';
@@ -26,7 +31,10 @@ export class BatchController {
   @Post()
   @Permissions('batches:create')
   @ApiOperation({ summary: 'Create a new batch' })
-  @ApiResponse({ status: 201, description: 'The batch has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The batch has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateBatchDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class BatchController {
   @Patch(':id')
   @Permissions('batches:update')
   @ApiOperation({ summary: 'Update a batch' })
-  @ApiResponse({ status: 200, description: 'The batch has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The batch has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateBatchDto) {
@@ -64,11 +75,13 @@ export class BatchController {
   @Delete(':id')
   @Permissions('batches:delete')
   @ApiOperation({ summary: 'Delete a batch' })
-  @ApiResponse({ status: 200, description: 'The batch has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The batch has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
 }
-

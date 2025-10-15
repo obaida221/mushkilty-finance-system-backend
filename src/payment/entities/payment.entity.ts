@@ -25,7 +25,7 @@ export class Payment {
   @JoinColumn({ name: 'payment_method_id' })
   paymentMethod: PaymentMethod;
 
-  @Column()
+  @Column({ comment: 'ID of the user who recorded the payment' })
   user_id: number;
 
   @ManyToOne(() => User)
@@ -39,11 +39,11 @@ export class Payment {
   @JoinColumn({ name: 'enrollment_id' })
   enrollment: Enrollment;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 255, 
+  @Column({
+    type: 'varchar',
+    length: 255,
     nullable: true,
-    comment: 'if enrollment_id is NULL then payer is NOT NULL'
+    comment: 'if enrollment_id is NULL then payer is NOT NULL',
   })
   payer: string;
 
@@ -53,19 +53,19 @@ export class Payment {
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: false })
   amount: number;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 10, 
+  @Column({
+    type: 'varchar',
+    length: 10,
     default: 'IQD',
-    comment: 'USD|IQD'
+    comment: 'USD|IQD',
   })
   currency: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 20, 
+  @Column({
+    type: 'varchar',
+    length: 20,
     nullable: true,
-    comment: 'installment|full'
+    comment: 'installment|full',
   })
   type: string;
 

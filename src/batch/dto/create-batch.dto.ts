@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsIn,
   IsNumber,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateBatchDto {
@@ -72,4 +72,10 @@ export class CreateBatchDto {
   @IsOptional()
   @IsNumber()
   actual_price?: number;
+
+  @ApiPropertyOptional({ example: 'IQD', description: 'USD, IQD' })
+  @IsOptional()
+  @IsString()
+  @IsIn(['USD', 'IQD'])
+  currency?: string;
 }

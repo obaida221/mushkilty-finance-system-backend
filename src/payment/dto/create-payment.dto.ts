@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsIn,
   IsNumber,
   MaxLength,
-  IsNotEmpty 
+  // IsNotEmpty,
 } from 'class-validator';
 
 export class CreatePaymentDto {
@@ -24,7 +24,7 @@ export class CreatePaymentDto {
   @IsInt()
   enrollment_id?: number;
 
-  @ApiPropertyOptional({ example: 'Ahmed Ali' })
+  @ApiPropertyOptional({ example: 'QAF LAB' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
@@ -45,7 +45,10 @@ export class CreatePaymentDto {
   @IsIn(['USD', 'IQD'])
   currency?: string;
 
-  @ApiPropertyOptional({ example: 'installment', description: 'installment|full' })
+  @ApiPropertyOptional({
+    example: 'installment',
+    description: 'installment|full',
+  })
   @IsOptional()
   @IsString()
   @IsIn(['installment', 'full'])

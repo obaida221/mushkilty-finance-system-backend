@@ -20,48 +20,56 @@ export class CourseService {
   async findAll(): Promise<Course[]> {
     return this.repository.find({
       relations: ['user', 'batches'],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Course> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['user', 'batches']
+      relations: ['user', 'batches'],
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Course with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
   async update(id: number, updateDto: UpdateCourseDto): Promise<Course> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Course with ID ${id} not found`);
+    }
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Course with ID ${id} not found`);
+    }
     await this.repository.delete(id);
   }
 
   // Dashboard specific methods
-  async getCourseDistribution(): Promise<Array<{name: string, value: number, color: string}>> {
+  async getCourseDistribution(): Promise<
+    Array<{ name: string; value: number; color: string }>
+  > {
     const colors = {
-      'online': '#DC2626',
-      'onsite': '#F59E0B',
-      'kids': '#10B981',
-      'ielts': '#3B82F6',
+      online: '#DC2626',
+      onsite: '#F59E0B',
+      kids: '#10B981',
+      ielts: '#3B82F6',
     };
 
     const arabicNames = {
-      'online': 'أونلاين',
-      'onsite': 'حضوري',
-      'kids': 'كيدز',
-      'ielts': 'آيلتس',
+      online: 'أونلاين',
+      onsite: 'حضوري',
+      kids: 'كيدز',
+      ielts: 'آيلتس',
     };
 
     const distribution = await this.repository
@@ -72,7 +80,7 @@ export class CourseService {
       .groupBy('course.project_type')
       .getRawMany();
 
-    return distribution.map(item => ({
+    return distribution.map((item) => ({
       name: arabicNames[item.type] || item.type,
       value: parseInt(item.count),
       color: colors[item.type] || '#6B7280',

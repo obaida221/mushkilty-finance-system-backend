@@ -33,6 +33,14 @@ export class DiscountCode {
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   amount: number;
 
+  @Column({
+    type: 'varchar',
+    length: 10,
+    default: 'IQD',
+    comment: 'USD|IQD',
+  })
+  currency: string;
+
   @Column({ type: 'int', nullable: true })
   percent: number;
 

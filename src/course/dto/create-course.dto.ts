@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsIn,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateCourseDto {
@@ -19,16 +19,18 @@ export class CreateCourseDto {
   @MaxLength(255)
   name: string;
 
-  @ApiPropertyOptional({ 
-    example: 'online', 
-    description: 'online|onsite|kids|ielts' 
+  @ApiPropertyOptional({
+    example: 'online',
+    description: 'online|onsite|kids|ielts',
   })
   @IsOptional()
   @IsString()
   @IsIn(['online', 'onsite', 'kids', 'ielts'])
   project_type?: string;
 
-  @ApiPropertyOptional({ example: 'Comprehensive English course for beginners' })
+  @ApiPropertyOptional({
+    example: 'Comprehensive English course for beginners',
+  })
   @IsOptional()
   @IsString()
   description?: string;

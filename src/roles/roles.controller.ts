@@ -15,7 +15,12 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { Permissions } from '../auth/decorators/permissions.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+} from '@nestjs/swagger';
 
 @ApiTags('roles')
 @ApiBearerAuth('bearer')
@@ -31,10 +36,11 @@ export class RolesController {
   }
 
   @Get('me/permissions')
-  @Permissions('roles:read')
-  @ApiOperation({ 
-    summary: 'Get current user\'s role permissions',
-    description: 'Retrieve all permissions for the currently authenticated user\'s role.'
+  // @Permissions('roles:read')
+  @ApiOperation({
+    summary: "Get current user's role permissions",
+    description:
+      "Retrieve all permissions for the currently authenticated user's role.",
   })
   getCurrentUserPermissions(@CurrentUser() user: any) {
     return this.service.getCurrentUserPermissions(user.id);
@@ -60,9 +66,10 @@ export class RolesController {
 
   @Post(':roleId/permissions/:permissionId')
   @Permissions('roles:update')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Assign a single permission to a role',
-    description: 'Assign a specific permission to a role using role ID and permission ID as path parameters.'
+    description:
+      'Assign a specific permission to a role using role ID and permission ID as path parameters.',
   })
   @ApiParam({ name: 'roleId', description: 'Role ID' })
   @ApiParam({ name: 'permissionId', description: 'Permission ID' })
@@ -75,9 +82,10 @@ export class RolesController {
 
   @Delete(':roleId/permissions/:permissionId')
   @Permissions('roles:update')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Remove a single permission from a role',
-    description: 'Remove a specific permission from a role using role ID and permission ID as path parameters.'
+    description:
+      'Remove a specific permission from a role using role ID and permission ID as path parameters.',
   })
   @ApiParam({ name: 'roleId', description: 'Role ID' })
   @ApiParam({ name: 'permissionId', description: 'Permission ID' })
@@ -90,9 +98,10 @@ export class RolesController {
 
   @Post(':id/permissions')
   @Permissions('roles:update')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Assign multiple permissions to a role',
-    description: 'Assign multiple permissions to a role by role ID. You can use permission names or permission IDs.'
+    description:
+      'Assign multiple permissions to a role by role ID. You can use permission names or permission IDs.',
   })
   @ApiParam({ name: 'id', description: 'Role ID' })
   assignPermissions(
@@ -109,9 +118,10 @@ export class RolesController {
 
   @Get(':id/permissions')
   @Permissions('roles:read')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get permissions for a specific role',
-    description: 'Retrieve all permissions assigned to a specific role by role ID.'
+    description:
+      'Retrieve all permissions assigned to a specific role by role ID.',
   })
   @ApiParam({ name: 'id', description: 'Role ID' })
   getRolePermissions(@Param('id') id: number) {
@@ -129,9 +139,7 @@ export class RolesController {
       { name: 'viewer', description: 'Read-only access' },
     ];
     return Promise.all(
-      base.map((r) =>
-        this.service.create(r as any).catch(() => undefined),
-      ),
+      base.map((r) => this.service.create(r as any).catch(() => undefined)),
     );
   }
 

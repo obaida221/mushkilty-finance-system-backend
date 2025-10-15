@@ -23,19 +23,19 @@ export class PaymentMethod {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
+  @Column({
+    type: 'varchar',
+    length: 50,
     nullable: false,
-    comment: 'cash|card|transfer'
+    comment: 'cash|card|transfer',
   })
   name: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 255, 
+  @Column({
+    type: 'varchar',
+    length: 255,
     nullable: true,
-    comment: 'card number or bank account number / null if cash'
+    comment: 'card number or bank account number / null if cash',
   })
   method_number: string;
 

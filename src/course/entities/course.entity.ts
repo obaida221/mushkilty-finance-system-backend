@@ -26,11 +26,11 @@ export class Course {
   @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
+  @Column({
+    type: 'varchar',
+    length: 50,
     nullable: true,
-    comment: 'online|onsite|kids|ielts'
+    comment: 'online|onsite|kids|ielts',
   })
   project_type: string;
 
