@@ -24,22 +24,6 @@ export class Expense {
   @Column({ type: 'varchar', length: 255, nullable: false })
   beneficiary: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
-    nullable: true,
-    comment: 'online|onsite|kids|ielts'
-  })
-  project_type: string;
-
-  @Column({ 
-    type: 'varchar', 
-    length: 100, 
-    nullable: true,
-    comment: 'salary|marketing|equipment|other'
-  })
-  category: string;
-
   @Column({ type: 'text', nullable: true })
   description: string;
 

@@ -63,4 +63,13 @@ export class CreatePaymentDto {
   @IsOptional()
   @IsString()
   payment_proof?: string;
+
+  @ApiPropertyOptional({
+    example: 'completed',
+    description: 'completed|returned|pending',
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(['completed', 'returned', 'pending'])
+  status?: string;
 }

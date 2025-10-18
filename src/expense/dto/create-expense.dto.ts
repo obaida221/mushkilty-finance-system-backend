@@ -21,18 +21,6 @@ export class CreateExpenseDto {
   @MaxLength(255)
   beneficiary: string;
 
-  @ApiPropertyOptional({ example: 'online', description: 'online|onsite|kids|ielts' })
-  @IsOptional()
-  @IsString()
-  @IsIn(['online', 'onsite', 'kids', 'ielts'])
-  project_type?: string;
-
-  @ApiPropertyOptional({ example: 'salary', description: 'salary|marketing|equipment|other' })
-  @IsOptional()
-  @IsString()
-  @IsIn(['salary', 'marketing', 'equipment', 'other'])
-  category?: string;
-
   @ApiPropertyOptional({ example: 'Monthly salary payment' })
   @IsOptional()
   @IsString()

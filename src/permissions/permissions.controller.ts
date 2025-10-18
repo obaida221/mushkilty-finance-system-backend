@@ -106,12 +106,12 @@ export class PermissionsController {
       'expenses:reports',
       
       // Payroll
-      'payroll:create',
-      'payroll:read',
-      'payroll:update',
-      'payroll:delete',
-      'payroll:search',
-      'payroll:reports',
+      'payrolls:create',
+      'payrolls:read',
+      'payrolls:update',
+      'payrolls:delete',
+      'payrolls:search',
+      'payrolls:reports',
       
       // System
       'bootstrap:seed',

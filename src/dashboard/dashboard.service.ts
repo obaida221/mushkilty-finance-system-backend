@@ -103,16 +103,12 @@ export class DashboardService {
       });
     }
 
-    // Expense categories breakdown
-    const expenseCategories = await this.expenseService.getCategoryBreakdown(year);
-
     return {
       year,
       totalIncome,
       totalExpenses,
       netProfit: totalIncome - totalExpenses,
       monthlyBreakdown,
-      expenseCategories,
     };
   }
 
@@ -148,7 +144,6 @@ export class DashboardService {
         description: `مصروف لـ ${expense.beneficiary}`,
         amount: expense.amount,
         currency: expense.currency,
-        category: expense.category,
       })),
     ];
 

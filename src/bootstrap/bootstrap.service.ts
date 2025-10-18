@@ -112,10 +112,10 @@ export class BootstrapService {
         'expenses:delete',
         
         // Payroll
-        'payroll:create',
-        'payroll:read',
-        'payroll:update',
-        'payroll:delete',
+        'payrolls:create',
+        'payrolls:read',
+        'payrolls:update',
+        'payrolls:delete',
         
         // Dashboard
         'dashboard:read',

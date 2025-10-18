@@ -75,6 +75,14 @@ export class Payment {
   @Column({ type: 'text', nullable: true, comment: 'image link' })
   payment_proof: string;
 
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: 'completed',
+    comment: 'completed|returned|pending',
+  })
+  status: string;
+
   @OneToMany(() => Refund, (refund) => refund.payment)
   refunds: Refund[];
 

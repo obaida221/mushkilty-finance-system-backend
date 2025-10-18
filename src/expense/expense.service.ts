@@ -95,26 +95,6 @@ export class ExpenseService {
     return result;
   }
 
-  async getCategoryBreakdown(year: number): Promise<Array<{category: string, amount: number}>> {
-    const yearStart = new Date(year, 0, 1);
-    const yearEnd = new Date(year, 11, 31, 23, 59, 59);
-
-    const categories = await this.repository
-      .createQueryBuilder('expense')
-      .select('expense.category', 'category')
-      .addSelect('SUM(expense.amount)', 'total')
-      .where('expense.expense_date BETWEEN :start AND :end', { start: yearStart, end: yearEnd })
-      .andWhere('expense.category IS NOT NULL')
-      .groupBy('expense.category')
-      .orderBy('total', 'DESC')
-      .getRawMany();
-
-    return categories.map(cat => ({
-      category: cat.category,
-      amount: parseFloat(cat.total),
-    }));
-  }
-
   async getRecentExpenses(limit: number = 5): Promise<Expense[]> {
     return this.repository.find({
       relations: ['user'],
