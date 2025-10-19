@@ -21,11 +21,16 @@ export class RolesService {
   ) {}
 
   findAll(): Promise<Role[]> {
-    return this.repo.find();
+    return this.repo.find({
+      relations: ['users', 'rolePermissions', 'rolePermissions.permission'],
+    });
   }
 
   findOne(id: number): Promise<Role | null> {
-    return this.repo.findOne({ where: { id } });
+    return this.repo.findOne({
+      where: { id },
+      relations: ['users', 'rolePermissions', 'rolePermissions.permission'],
+    });
   }
 
   create(data: CreateRoleDto): Promise<Role> {
@@ -46,33 +51,35 @@ export class RolesService {
     const role = await this.repo.findOne({ where: { id: roleId } });
     if (!role) throw new Error('Role not found');
 
-    const permission = await this.permRepo.findOne({ where: { id: permissionId } });
+    const permission = await this.permRepo.findOne({
+      where: { id: permissionId },
+    });
     if (!permission) throw new Error('Permission not found');
 
     // Check if permission is already assigned
-    const existing = await this.rpRepo.findOne({ 
-      where: { role_id: roleId, permission_id: permissionId } 
+    const existing = await this.rpRepo.findOne({
+      where: { role_id: roleId, permission_id: permissionId },
     });
 
     if (existing) {
-      return { 
+      return {
         message: 'Permission already assigned to role',
         role,
-        permission 
+        permission,
       };
     }
 
     // Assign the permission
-    const rolePermission = this.rpRepo.create({ 
-      role_id: roleId, 
-      permission_id: permissionId 
+    const rolePermission = this.rpRepo.create({
+      role_id: roleId,
+      permission_id: permissionId,
     });
     await this.rpRepo.save(rolePermission);
 
-    return { 
+    return {
       message: 'Permission successfully assigned to role',
       role,
-      permission 
+      permission,
     };
   }
 
@@ -81,29 +88,31 @@ export class RolesService {
     const role = await this.repo.findOne({ where: { id: roleId } });
     if (!role) throw new Error('Role not found');
 
-    const permission = await this.permRepo.findOne({ where: { id: permissionId } });
+    const permission = await this.permRepo.findOne({
+      where: { id: permissionId },
+    });
     if (!permission) throw new Error('Permission not found');
 
     // Check if permission is assigned
-    const existing = await this.rpRepo.findOne({ 
-      where: { role_id: roleId, permission_id: permissionId } 
+    const existing = await this.rpRepo.findOne({
+      where: { role_id: roleId, permission_id: permissionId },
     });
 
     if (!existing) {
-      return { 
+      return {
         message: 'Permission is not assigned to this role',
         role,
-        permission 
+        permission,
       };
     }
 
     // Remove the permission
     await this.rpRepo.delete({ role_id: roleId, permission_id: permissionId });
 
-    return { 
+    return {
       message: 'Permission successfully removed from role',
       role,
-      permission 
+      permission,
     };
   }
 
@@ -119,10 +128,14 @@ export class RolesService {
 
     let perms: Permission[] = [];
     if (permissionNames && permissionNames.length) {
-      perms = await this.permRepo.find({ where: { name: In(permissionNames) } });
+      perms = await this.permRepo.find({
+        where: { name: In(permissionNames) },
+      });
     }
     if (permissionIds && permissionIds.length) {
-      const byIds = await this.permRepo.find({ where: { id: In(permissionIds) } });
+      const byIds = await this.permRepo.find({
+        where: { id: In(permissionIds) },
+      });
       perms = [...perms, ...byIds];
     }
     // de-duplicate perms by id
@@ -142,7 +155,10 @@ export class RolesService {
 
     if (toInsert.length) await this.rpRepo.save(toInsert);
 
-    return this.rpRepo.find({ where: { role_id: roleId }, relations: ['permission'] });
+    return this.rpRepo.find({
+      where: { role_id: roleId },
+      relations: ['permission'],
+    });
   }
 
   // Get permissions for a specific role
@@ -150,22 +166,22 @@ export class RolesService {
     const role = await this.repo.findOne({ where: { id: roleId } });
     if (!role) throw new Error('Role not found');
 
-    const rolePermissions = await this.rpRepo.find({ 
-      where: { role_id: roleId }, 
-      relations: ['permission'] 
+    const rolePermissions = await this.rpRepo.find({
+      where: { role_id: roleId },
+      relations: ['permission'],
     });
 
     return {
       role: role,
-      permissions: rolePermissions.map(rp => rp.permission)
+      permissions: rolePermissions.map((rp) => rp.permission),
     };
   }
 
   // Get current user's role permissions
   async getCurrentUserPermissions(userId: number) {
-    const user = await this.userRepo.findOne({ 
+    const user = await this.userRepo.findOne({
       where: { id: userId },
-      relations: ['role']
+      relations: ['role'],
     });
 
     if (!user) {
@@ -177,26 +193,26 @@ export class RolesService {
         user: {
           id: user.id,
           email: user.email,
-          name: user.name
+          name: user.name,
         },
         role: null,
-        permissions: []
+        permissions: [],
       };
     }
 
-    const rolePermissions = await this.rpRepo.find({ 
-      where: { role_id: user.role.id }, 
-      relations: ['permission'] 
+    const rolePermissions = await this.rpRepo.find({
+      where: { role_id: user.role.id },
+      relations: ['permission'],
     });
 
     return {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
+        name: user.name,
       },
       role: user.role,
-      permissions: rolePermissions.map(rp => rp.permission)
+      permissions: rolePermissions.map((rp) => rp.permission),
     };
   }
 }
