@@ -19,31 +19,37 @@ export class StudentService {
 
   async findAll(): Promise<Student[]> {
     return this.repository.find({
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Student> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['enrollments']
+      relations: ['enrollments'],
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
   async update(id: number, updateDto: UpdateStudentDto): Promise<Student> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Student with ID ${id} not found`);
+    }
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Student with ID ${id} not found`);
+    }
     await this.repository.delete(id);
   }
 }

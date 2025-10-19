@@ -5,8 +5,7 @@ import { DiscountCodeController } from './discount-code.controller';
 import { DiscountCode } from './entities/discount-code.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([DiscountCode])],
+  imports: [TypeOrmModule.forFeature([DiscountCode])],
   controllers: [DiscountCodeController],
   providers: [DiscountCodeService],
   exports: [DiscountCodeService],

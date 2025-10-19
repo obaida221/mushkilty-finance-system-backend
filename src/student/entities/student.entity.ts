@@ -20,7 +20,7 @@ export class Student {
   age: number;
 
   @Column({ type: 'date', nullable: true })
-  dob: Date;
+  dob: Date | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   education_level: string;
@@ -37,11 +37,11 @@ export class Student {
   @Column({ type: 'varchar', length: 255, nullable: true })
   area: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 100, 
+  @Column({
+    type: 'varchar',
+    length: 100,
     nullable: true,
-    comment: 'online|onsite|kids|ielts'
+    comment: 'online|onsite|kids|ielts',
   })
   course_type: string;
 
@@ -51,11 +51,11 @@ export class Student {
   @Column({ type: 'boolean', default: false })
   is_returning: boolean;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
+  @Column({
+    type: 'varchar',
+    length: 50,
     default: 'pending',
-    comment: 'pending, contacted with, tested, accepted, rejected'
+    comment: 'pending, contacted with, tested, accepted, rejected',
   })
   status: string;
 

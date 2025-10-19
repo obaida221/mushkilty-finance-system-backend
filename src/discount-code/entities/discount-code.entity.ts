@@ -36,10 +36,10 @@ export class DiscountCode {
   @Column({
     type: 'varchar',
     length: 10,
-    default: 'IQD',
+    nullable: true,
     comment: 'USD|IQD',
   })
-  currency: string;
+  currency: string | null;
 
   @Column({ type: 'int', nullable: true })
   percent: number;
@@ -51,10 +51,10 @@ export class DiscountCode {
   used_count: number;
 
   @Column({ type: 'date', nullable: true })
-  valid_from: Date;
+  valid_from: Date | null;
 
   @Column({ type: 'date', nullable: true })
-  valid_to: Date;
+  valid_to: Date | null;
 
   @Column({ type: 'boolean', default: true })
   active: boolean;

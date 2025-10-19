@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsBoolean, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsBoolean,
   IsNumber,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateDiscountCodeDto {
@@ -38,6 +38,12 @@ export class CreateDiscountCodeDto {
   @IsNumber()
   amount?: number;
 
+  @ApiPropertyOptional({ example: 'IQD', description: 'USD|IQD' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(10)
+  currency?: string | null;
+
   @ApiPropertyOptional({ example: 10 })
   @IsOptional()
   @IsInt()
@@ -56,12 +62,12 @@ export class CreateDiscountCodeDto {
   @ApiPropertyOptional({ example: '2024-01-01' })
   @IsOptional()
   @IsDateString()
-  valid_from?: Date;
+  valid_from?: Date | null;
 
   @ApiPropertyOptional({ example: '2024-12-31' })
   @IsOptional()
   @IsDateString()
-  valid_to?: Date;
+  valid_to?: Date | null;
 
   @ApiPropertyOptional({ example: true })
   @IsOptional()

@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsBoolean, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsBoolean,
+  IsIn,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateStudentDto {
@@ -25,7 +25,7 @@ export class CreateStudentDto {
   @ApiPropertyOptional({ example: '1998-01-15' })
   @IsOptional()
   @IsDateString()
-  dob?: Date;
+  dob?: Date | null;
 
   @ApiPropertyOptional({ example: 'Bachelor Degree' })
   @IsOptional()
@@ -57,7 +57,10 @@ export class CreateStudentDto {
   @MaxLength(255)
   area?: string;
 
-  @ApiPropertyOptional({ example: 'online', description: 'online|onsite|kids|ielts' })
+  @ApiPropertyOptional({
+    example: 'online',
+    description: 'online|onsite|kids|ielts',
+  })
   @IsOptional()
   @IsString()
   @IsIn(['online', 'onsite', 'kids', 'ielts'])
@@ -73,9 +76,9 @@ export class CreateStudentDto {
   @IsBoolean()
   is_returning?: boolean;
 
-  @ApiPropertyOptional({ 
-    example: 'pending', 
-    description: 'pending, contacted with, tested, accepted, rejected' 
+  @ApiPropertyOptional({
+    example: 'pending',
+    description: 'pending, contacted with, tested, accepted, rejected',
   })
   @IsOptional()
   @IsString()

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DiscountCode } from './entities/discount-code.entity';
@@ -19,42 +23,53 @@ export class DiscountCodeService {
 
   async findAll(): Promise<DiscountCode[]> {
     return this.repository.find({
-      order: { created_at: 'DESC' }
+      relations: ['user'],
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<DiscountCode> {
     const entity = await this.repository.findOne({
-      where: { id }
+      relations: ['user'],
+      where: { id },
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`DiscountCode with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
-  async update(id: number, updateDto: UpdateDiscountCodeDto): Promise<DiscountCode> {
+  async update(
+    id: number,
+    updateDto: UpdateDiscountCodeDto,
+  ): Promise<DiscountCode> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`DiscountCode with ID ${id} not found`);
+    }
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`DiscountCode with ID ${id} not found`);
+    }
     await this.repository.delete(id);
   }
 
   async findByCode(code: string): Promise<DiscountCode> {
     const entity = await this.repository.findOne({
-      where: { code }
+      where: { code },
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Discount code '${code}' not found`);
     }
-    
+
     return entity;
   }
 
@@ -66,8 +81,13 @@ export class DiscountCodeService {
       throw new BadRequestException(`Discount code '${code}' has expired`);
     }
 
-    if (discountCode.usage_limit && discountCode.used_count >= discountCode.usage_limit) {
-      throw new BadRequestException(`Discount code '${code}' has reached its usage limit`);
+    if (
+      discountCode.usage_limit &&
+      discountCode.used_count >= discountCode.usage_limit
+    ) {
+      throw new BadRequestException(
+        `Discount code '${code}' has reached its usage limit`,
+      );
     }
 
     if (!discountCode.active) {
@@ -79,5 +99,9 @@ export class DiscountCodeService {
 
   async incrementUsage(id: number): Promise<void> {
     await this.repository.increment({ id }, 'used_count', 1);
+  }
+
+  async decrementUsage(id: number): Promise<void> {
+    await this.repository.decrement({ id }, 'used_count', 1);
   }
 }

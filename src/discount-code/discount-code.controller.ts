@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { DiscountCodeService } from './discount-code.service';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
 import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
@@ -26,7 +31,10 @@ export class DiscountCodeController {
   @Post()
   @Permissions('discount-codes:create')
   @ApiOperation({ summary: 'Create a new discount code' })
-  @ApiResponse({ status: 201, description: 'The discount code has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The discount code has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateDiscountCodeDto) {
     return this.service.create(createDto);
@@ -45,7 +53,10 @@ export class DiscountCodeController {
   @Permissions('discount-codes:read')
   @ApiOperation({ summary: 'Validate a discount code' })
   @ApiResponse({ status: 200, description: 'Discount code is valid.' })
-  @ApiResponse({ status: 400, description: 'Discount code is invalid or expired.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Discount code is invalid or expired.',
+  })
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
   validateCode(@Body('code') code: string) {
     return this.service.validateCode(code);
@@ -64,7 +75,10 @@ export class DiscountCodeController {
   @Patch(':id')
   @Permissions('discount-codes:update')
   @ApiOperation({ summary: 'Update a discount code' })
-  @ApiResponse({ status: 200, description: 'The discount code has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The discount code has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateDiscountCodeDto) {
@@ -74,7 +88,10 @@ export class DiscountCodeController {
   @Delete(':id')
   @Permissions('discount-codes:delete')
   @ApiOperation({ summary: 'Delete a discount code' })
-  @ApiResponse({ status: 200, description: 'The discount code has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The discount code has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
@@ -89,5 +106,13 @@ export class DiscountCodeController {
   incrementUsage(@Param('id') id: string) {
     return this.service.incrementUsage(+id);
   }
-}
 
+  @Patch(':id/decrement-usage')
+  @Permissions('discount-codes:update')
+  @ApiOperation({ summary: 'Decrement usage count of a discount code' })
+  @ApiResponse({ status: 200, description: 'Usage count decremented.' })
+  @ApiResponse({ status: 404, description: 'Not found.' })
+  decrementUsage(@Param('id') id: string) {
+    return this.service.decrementUsage(+id);
+  }
+}
