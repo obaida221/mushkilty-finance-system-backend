@@ -20,31 +20,40 @@ export class EnrollmentService {
   async findAll(): Promise<Enrollment[]> {
     return this.repository.find({
       relations: ['student', 'batch', 'batch.course'],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Enrollment> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['student', 'batch', 'batch.course']
+      relations: ['student', 'batch', 'batch.course'],
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Enrollment with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
-  async update(id: number, updateDto: UpdateEnrollmentDto): Promise<Enrollment> {
+  async update(
+    id: number,
+    updateDto: UpdateEnrollmentDto,
+  ): Promise<Enrollment> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Enrollment with ID ${id} not found`);
+    }
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+    if (!entity) {
+      throw new NotFoundException(`Enrollment with ID ${id} not found`);
+    }
     await this.repository.delete(id);
   }
 
@@ -53,35 +62,60 @@ export class EnrollmentService {
     const result = await this.repository
       .createQueryBuilder('enrollment')
       .select('COUNT(DISTINCT enrollment.student_id)', 'count')
-      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
+      .where('enrollment.status IN (:...statuses)', {
+        statuses: ['pending', 'accepted'],
+      })
       .getRawOne();
-    
+
     return parseInt(result?.count || 0);
   }
 
-  async getActiveStudentsCountByMonth(year: number, month: number): Promise<number> {
+  async getActiveStudentsCountByMonth(
+    year: number,
+    month: number,
+  ): Promise<number> {
     const result = await this.repository
       .createQueryBuilder('enrollment')
       .select('COUNT(DISTINCT enrollment.student_id)', 'count')
-      .where('enrollment.status IN (:...statuses)', { statuses: ['pending', 'accepted'] })
+      .where('enrollment.status IN (:...statuses)', {
+        statuses: ['pending', 'accepted'],
+      })
       .andWhere('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year })
-      .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month })
+      .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', {
+        month,
+      })
       .getRawOne();
-    
+
     return parseInt(result?.count || 0);
   }
 
-  async getEnrollmentChartData(months: number = 6): Promise<Array<{month: string, students: number}>> {
+  async getEnrollmentChartData(
+    months: number = 6,
+  ): Promise<Array<{ month: string; students: number }>> {
     const monthNames = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
 
-    const result: Array<{month: string, students: number}> = [];
+    const result: Array<{ month: string; students: number }> = [];
     const currentDate = new Date();
 
     for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1,
+      );
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
 
@@ -89,7 +123,9 @@ export class EnrollmentService {
         .createQueryBuilder('enrollment')
         .select('COUNT(*)', 'count')
         .where('EXTRACT(YEAR FROM enrollment.enrolled_at) = :year', { year })
-        .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', { month })
+        .andWhere('EXTRACT(MONTH FROM enrollment.enrolled_at) = :month', {
+          month,
+        })
         .getRawOne();
 
       result.push({

@@ -50,22 +50,22 @@ export class Enrollment {
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   total_price: number;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 10, 
+  @Column({
+    type: 'varchar',
+    length: 10,
     default: 'IQD',
-    comment: 'USD|IQD'
+    comment: 'USD|IQD',
   })
   currency: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   enrolled_at: Date;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 50, 
+  @Column({
+    type: 'varchar',
+    length: 50,
     default: 'pending',
-    comment: 'pending, accepted, dropped, completed'
+    comment: 'pending, accepted, dropped, completed',
   })
   status: string;
 
