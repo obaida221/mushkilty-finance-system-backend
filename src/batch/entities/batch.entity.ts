@@ -49,10 +49,10 @@ export class Batch {
   location: string;
 
   @Column({ type: 'date', nullable: true })
-  start_date: Date;
+  start_date: Date | null;
 
   @Column({ type: 'date', nullable: true })
-  end_date: Date;
+  end_date: Date | null;
 
   @Column({
     type: 'text',

@@ -45,12 +45,12 @@ export class CreateBatchDto {
   @ApiPropertyOptional({ example: '2024-01-15' })
   @IsOptional()
   @IsDateString()
-  start_date?: Date;
+  start_date?: Date | null;
 
   @ApiPropertyOptional({ example: '2024-06-15' })
   @IsOptional()
   @IsDateString()
-  end_date?: Date;
+  end_date?: Date | null;
 
   @ApiPropertyOptional({ example: 'every monday, wednesday, friday at 3pm' })
   @IsOptional()
