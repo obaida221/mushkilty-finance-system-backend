@@ -24,19 +24,19 @@ export class Payroll {
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: false })
   amount: number;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 10, 
+  @Column({
+    type: 'varchar',
+    length: 10,
     default: 'IQD',
-    comment: 'USD|IQD'
+    comment: 'USD|IQD',
   })
   currency: string;
 
   @Column({ type: 'date', nullable: false })
   period_start: Date;
 
-  @Column({ type: 'date', nullable: false })
-  period_end: Date;
+  @Column({ type: 'date', nullable: true })
+  period_end: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
   paid_at: Date;
