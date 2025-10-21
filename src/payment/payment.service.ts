@@ -19,7 +19,16 @@ export class PaymentService {
 
   async findAll(): Promise<Payment[]> {
     return this.repository.find({
-      relations: ['enrollment', 'enrollment.student', 'paymentMethod', 'user'],
+      relations: [
+        'enrollment',
+        'enrollment.student',
+        'enrollment.batch',
+        'enrollment.batch.course',
+        'enrollment.batch.trainer',
+        'paymentMethod',
+        'user',
+        'user.role',
+      ],
       order: { created_at: 'DESC' },
     });
   }
@@ -27,7 +36,16 @@ export class PaymentService {
   async findOne(id: number): Promise<Payment> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['enrollment', 'enrollment.student', 'paymentMethod', 'user'],
+      relations: [
+        'enrollment',
+        'enrollment.student',
+        'enrollment.batch',
+        'enrollment.batch.course',
+        'enrollment.batch.trainer',
+        'paymentMethod',
+        'user',
+        'user.role',
+      ],
     });
 
     if (!entity) {
@@ -67,9 +85,9 @@ export class PaymentService {
         start: startDate,
         end: endDate,
       })
-      .getRawOne();
+      .getRawOne<{ total: string }>();
 
-    return parseFloat(result?.total || 0);
+    return parseFloat(result?.total || '0');
   }
 
   async getTotalByMonth(year: number, month: number): Promise<number> {
@@ -78,9 +96,9 @@ export class PaymentService {
       .select('SUM(payment.amount)', 'total')
       .where('EXTRACT(YEAR FROM payment.paid_at) = :year', { year })
       .andWhere('EXTRACT(MONTH FROM payment.paid_at) = :month', { month })
-      .getRawOne();
+      .getRawOne<{ total: string }>();
 
-    return parseFloat(result?.total || 0);
+    return parseFloat(result?.total || '0');
   }
 
   async getRevenueChartData(
@@ -159,7 +177,16 @@ export class PaymentService {
 
   async getRecentPayments(limit: number = 5): Promise<Payment[]> {
     return this.repository.find({
-      relations: ['enrollment', 'enrollment.student', 'paymentMethod'],
+      relations: [
+        'enrollment',
+        'enrollment.student',
+        'enrollment.batch',
+        'enrollment.batch.course',
+        'enrollment.batch.trainer',
+        'paymentMethod',
+        'user',
+        'user.role',
+      ],
       order: { paid_at: 'DESC' },
       take: limit,
     });

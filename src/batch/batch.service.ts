@@ -26,7 +26,7 @@ export class BatchService {
 
   async findAll(): Promise<Batch[]> {
     return this.repository.find({
-      relations: ['course', 'enrollments'],
+      relations: ['course', 'enrollments', 'enrollments.student', 'trainer'],
       order: { created_at: 'DESC' },
     });
   }
@@ -34,7 +34,7 @@ export class BatchService {
   async findOne(id: number): Promise<Batch> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['course', 'enrollments'],
+      relations: ['course', 'enrollments', 'enrollments.student', 'trainer'],
     });
 
     if (!entity) {

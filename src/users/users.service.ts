@@ -63,6 +63,21 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`user with id: ${id} not found`);
     }
+
+    const existingUserEmail = await this.repo.findOne({
+      where: { email: data.email },
+    });
+    if (existingUserEmail && existingUserEmail.id !== id) {
+      throw new ConflictException('Email already exist!');
+    }
+
+    const existingUserName = await this.repo.findOne({
+      where: { name: data.name },
+    });
+    if (existingUserName && existingUserName.id !== id) {
+      throw new ConflictException('The name of the user already exist!');
+    }
+
     // Handle password hashing if raw password is provided
     const updateData: any = { ...data };
     if (data.password && !data.password_hash) {
