@@ -19,7 +19,7 @@ export class PayrollService {
 
   async findAll(): Promise<Payroll[]> {
     return this.repository.find({
-      relations: ['user'],
+      relations: ['user', 'user.role'],
       order: { created_at: 'DESC' },
     });
   }
@@ -27,7 +27,7 @@ export class PayrollService {
   async findOne(id: number): Promise<Payroll> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'user.role'],
     });
 
     if (!entity) {
