@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -26,7 +31,10 @@ export class StudentController {
   @Post()
   @Permissions('students:create')
   @ApiOperation({ summary: 'Create a new student' })
-  @ApiResponse({ status: 201, description: 'The student has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The student has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateStudentDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class StudentController {
   @Patch(':id')
   @Permissions('students:update')
   @ApiOperation({ summary: 'Update a student' })
-  @ApiResponse({ status: 200, description: 'The student has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The student has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateStudentDto) {
@@ -64,7 +75,10 @@ export class StudentController {
   @Delete(':id')
   @Permissions('students:delete')
   @ApiOperation({ summary: 'Delete a student' })
-  @ApiResponse({ status: 200, description: 'The student has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The student has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
