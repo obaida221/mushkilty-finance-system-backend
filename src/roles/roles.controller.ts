@@ -21,6 +21,7 @@ import {
   ApiOperation,
   ApiParam,
 } from '@nestjs/swagger';
+import { User } from 'src/users/entities/user.entity';
 
 @ApiTags('roles')
 @ApiBearerAuth('bearer')
@@ -42,7 +43,7 @@ export class RolesController {
     description:
       "Retrieve all permissions for the currently authenticated user's role.",
   })
-  getCurrentUserPermissions(@CurrentUser() user: any) {
+  getCurrentUserPermissions(@CurrentUser() user: User) {
     return this.service.getCurrentUserPermissions(user.id);
   }
 

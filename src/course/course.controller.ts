@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -26,7 +31,10 @@ export class CourseController {
   @Post()
   @Permissions('courses:create')
   @ApiOperation({ summary: 'Create a new course' })
-  @ApiResponse({ status: 201, description: 'The course has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The course has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateCourseDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class CourseController {
   @Patch(':id')
   @Permissions('courses:update')
   @ApiOperation({ summary: 'Update a course' })
-  @ApiResponse({ status: 200, description: 'The course has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The course has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateCourseDto) {
@@ -64,7 +75,10 @@ export class CourseController {
   @Delete(':id')
   @Permissions('courses:delete')
   @ApiOperation({ summary: 'Delete a course' })
-  @ApiResponse({ status: 200, description: 'The course has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The course has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {

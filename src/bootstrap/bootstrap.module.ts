@@ -34,7 +34,7 @@ import { Payroll } from '../payroll/entities/payroll.entity';
       Refund,
       Expense,
       Payroll,
-    ])
+    ]),
   ],
   providers: [BootstrapService],
   controllers: [BootstrapController],

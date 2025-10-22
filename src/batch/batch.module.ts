@@ -5,8 +5,7 @@ import { BatchController } from './batch.controller';
 import { Batch } from './entities/batch.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Batch])],
+  imports: [TypeOrmModule.forFeature([Batch])],
   controllers: [BatchController],
   providers: [BatchService],
   exports: [BatchService],

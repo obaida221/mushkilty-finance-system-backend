@@ -22,14 +22,18 @@ export class BootstrapService {
   constructor(
     @InjectRepository(Permission) private permRepo: Repository<Permission>,
     @InjectRepository(Role) private roleRepo: Repository<Role>,
-    @InjectRepository(RolePermission) private rpRepo: Repository<RolePermission>,
+    @InjectRepository(RolePermission)
+    private rpRepo: Repository<RolePermission>,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Student) private studentRepo: Repository<Student>,
     @InjectRepository(Course) private courseRepo: Repository<Course>,
     @InjectRepository(Batch) private batchRepo: Repository<Batch>,
-    @InjectRepository(Enrollment) private enrollmentRepo: Repository<Enrollment>,
-    @InjectRepository(DiscountCode) private discountRepo: Repository<DiscountCode>,
-    @InjectRepository(PaymentMethod) private paymentMethodRepo: Repository<PaymentMethod>,
+    @InjectRepository(Enrollment)
+    private enrollmentRepo: Repository<Enrollment>,
+    @InjectRepository(DiscountCode)
+    private discountRepo: Repository<DiscountCode>,
+    @InjectRepository(PaymentMethod)
+    private paymentMethodRepo: Repository<PaymentMethod>,
     @InjectRepository(Payment) private paymentRepo: Repository<Payment>,
     @InjectRepository(Refund) private refundRepo: Repository<Refund>,
     @InjectRepository(Expense) private expenseRepo: Repository<Expense>,
@@ -39,7 +43,7 @@ export class BootstrapService {
   async run() {
     try {
       console.log('🚀 Starting bootstrap seeding...');
-      
+
       // Seed permissions
       console.log('📝 Seeding permissions...');
       const permissions = [
@@ -56,77 +60,79 @@ export class BootstrapService {
         'permissions:read',
         'permissions:update',
         'permissions:delete',
-        
+
         // Students
         'students:create',
         'students:read',
         'students:update',
         'students:delete',
-        
+
         // Courses
         'courses:create',
         'courses:read',
         'courses:update',
         'courses:delete',
-        
+
         // Batches
         'batches:create',
         'batches:read',
         'batches:update',
         'batches:delete',
-        
+
         // Enrollments
         'enrollments:create',
         'enrollments:read',
         'enrollments:update',
         'enrollments:delete',
-        
+
         // Discount Codes
         'discount-codes:create',
         'discount-codes:read',
         'discount-codes:update',
         'discount-codes:delete',
-        
+
         // Payment Methods
         'payment-methods:create',
         'payment-methods:read',
         'payment-methods:update',
         'payment-methods:delete',
-        
+
         // Payments
         'payments:create',
         'payments:read',
         'payments:update',
         'payments:delete',
-        
+
         // Refunds
         'refunds:create',
         'refunds:read',
         'refunds:update',
         'refunds:delete',
-        
+
         // Expenses
         'expenses:create',
         'expenses:read',
         'expenses:update',
         'expenses:delete',
-        
+
         // Payroll
         'payrolls:create',
         'payrolls:read',
         'payrolls:update',
         'payrolls:delete',
-        
+
         // Dashboard
         'dashboard:read',
         'dashboard:analytics',
-        
+
         // System
         'bootstrap:seed',
         'system:admin',
       ];
 
-      const existingPerms = await this.permRepo.find({ where: { name: In(permissions) } });
+      const existingPerms = await this.permRepo.find({
+        where: { name: In(permissions) },
+      });
       const existingSet = new Set(existingPerms.map((p) => p.name));
       const toCreate = permissions
         .filter((name) => !existingSet.has(name))
@@ -138,19 +144,33 @@ export class BootstrapService {
         console.log('✅ All permissions already exist');
       }
 
-      const allPerms = await this.permRepo.find({ where: { name: In(permissions) } });
+      const allPerms = await this.permRepo.find({
+        where: { name: In(permissions) },
+      });
 
       // Seed roles
       console.log('👥 Seeding roles...');
       const roles = [
         { name: 'admin', description: 'Full system access' },
-        { name: 'accountant', description: 'Manage payments, expenses, and payroll' },
-        { name: 'instructor', description: 'Manage courses, batches, and students' },
-        { name: 'student_advisor', description: 'Manage students and enrollments' },
-        { name: 'finance_manager', description: 'View reports and manage discounts' },
+        {
+          name: 'accountant',
+          description: 'Manage payments, expenses, and payroll',
+        },
+        {
+          name: 'instructor',
+          description: 'Manage courses, batches, and students',
+        },
+        {
+          name: 'student_advisor',
+          description: 'Manage students and enrollments',
+        },
+        {
+          name: 'finance_manager',
+          description: 'View reports and manage discounts',
+        },
         { name: 'viewer', description: 'Read-only access' },
       ];
-      
+
       const existingRoles = await this.roleRepo.find();
       const roleNames = new Set(existingRoles.map((r) => r.name));
       const rolesToCreate = roles
@@ -167,11 +187,15 @@ export class BootstrapService {
       if (admin) {
         // Assign all permissions to admin
         console.log('🔑 Assigning permissions to admin role...');
-        const existingRps = await this.rpRepo.find({ where: { role_id: admin.id } });
+        const existingRps = await this.rpRepo.find({
+          where: { role_id: admin.id },
+        });
         const permIdSet = new Set(existingRps.map((rp) => rp.permission_id));
         const rpsToCreate = allPerms
           .filter((p) => !permIdSet.has(p.id))
-          .map((p) => this.rpRepo.create({ role_id: admin.id, permission_id: p.id }));
+          .map((p) =>
+            this.rpRepo.create({ role_id: admin.id, permission_id: p.id }),
+          );
         if (rpsToCreate.length) {
           await this.rpRepo.save(rpsToCreate);
           console.log(`✅ Assigned ${rpsToCreate.length} permissions to admin`);
@@ -182,7 +206,9 @@ export class BootstrapService {
 
       // Seed admin user if none exists
       console.log('👤 Seeding admin user...');
-      const anyUser = await this.userRepo.findOne({ where: { email: 'admin@example.com' } });
+      const anyUser = await this.userRepo.findOne({
+        where: { email: 'admin@example.com' },
+      });
       if (!anyUser && admin) {
         const password_hash = await bcrypt.hash('Admin@123', 10);
         await this.userRepo.save(
@@ -213,8 +239,10 @@ export class BootstrapService {
       console.log('  1. Login with admin credentials');
       console.log('  2. Create additional users and assign roles');
       console.log('  3. Start using the API endpoints');
-      console.log('  4. Create courses, batches, students, and other data through the API');
-      
+      console.log(
+        '  4. Create courses, batches, students, and other data through the API',
+      );
+
       return { ok: true, message: 'Database seeded successfully' };
     } catch (error) {
       console.error('❌ Bootstrap seeding failed:', error);
@@ -226,7 +254,9 @@ export class BootstrapService {
     try {
       // Get admin user first (needed for payment methods and courses)
       console.log('� Finding admin user for data creation...');
-      const adminUser = await this.userRepo.findOne({ where: { email: 'admin@example.com' } });
+      const adminUser = await this.userRepo.findOne({
+        where: { email: 'admin@example.com' },
+      });
       if (!adminUser) {
         console.log('⚠️ Admin user not found, skipping sample data seeding');
         return;
@@ -236,22 +266,47 @@ export class BootstrapService {
       console.log('�💳 Seeding payment methods...');
       // Seed Payment Methods (now with user_id)
       const paymentMethods = [
-        { user_id: adminUser.id, name: 'cash', description: 'Cash payment', is_valid: true },
-        { user_id: adminUser.id, name: 'transfer', description: 'Bank transfer payment', is_valid: true },
-        { user_id: adminUser.id, name: 'card', description: 'Credit card payment', is_valid: true },
-        { user_id: adminUser.id, name: 'card', description: 'PayPal payment', method_number: 'paypal', is_valid: true },
+        {
+          user_id: adminUser.id,
+          name: 'cash',
+          description: 'Cash payment',
+          is_valid: true,
+        },
+        {
+          user_id: adminUser.id,
+          name: 'transfer',
+          description: 'Bank transfer payment',
+          is_valid: true,
+        },
+        {
+          user_id: adminUser.id,
+          name: 'card',
+          description: 'Credit card payment',
+          is_valid: true,
+        },
+        {
+          user_id: adminUser.id,
+          name: 'card',
+          description: 'PayPal payment',
+          method_number: 'paypal',
+          is_valid: true,
+        },
       ];
 
       for (const method of paymentMethods) {
-        const existing = await this.paymentMethodRepo.findOne({ 
-          where: { 
-            name: method.name, 
+        const existing = await this.paymentMethodRepo.findOne({
+          where: {
+            name: method.name,
             user_id: method.user_id,
-            ...(method.method_number && { method_number: method.method_number })
-          } 
+            ...(method.method_number && {
+              method_number: method.method_number,
+            }),
+          },
         });
         if (!existing) {
-          await this.paymentMethodRepo.save(this.paymentMethodRepo.create(method));
+          await this.paymentMethodRepo.save(
+            this.paymentMethodRepo.create(method),
+          );
         }
       }
       console.log('✅ Payment methods seeded');
@@ -290,9 +345,13 @@ export class BootstrapService {
 
       const createdCourses: Course[] = [];
       for (const course of courses) {
-        const existing = await this.courseRepo.findOne({ where: { name: course.name } });
+        const existing = await this.courseRepo.findOne({
+          where: { name: course.name },
+        });
         if (!existing) {
-          const created = await this.courseRepo.save(this.courseRepo.create(course));
+          const created = await this.courseRepo.save(
+            this.courseRepo.create(course),
+          );
           createdCourses.push(created);
         } else {
           createdCourses.push(existing);
@@ -335,9 +394,13 @@ export class BootstrapService {
       const createdBatches: Batch[] = [];
       for (const batch of batches) {
         if (batch.course_id) {
-          const existing = await this.batchRepo.findOne({ where: { name: batch.name } });
+          const existing = await this.batchRepo.findOne({
+            where: { name: batch.name },
+          });
           if (!existing) {
-            const created = await this.batchRepo.save(this.batchRepo.create(batch));
+            const created = await this.batchRepo.save(
+              this.batchRepo.create(batch),
+            );
             createdBatches.push(created);
           } else {
             createdBatches.push(existing);
@@ -353,9 +416,9 @@ export class BootstrapService {
           code: 'WELCOME2025',
           description: 'Welcome discount for new students',
           discount_type: 'percentage',
-          discount_value: 10.00,
-          min_amount: 100.00,
-          max_discount: 50.00,
+          discount_value: 10.0,
+          min_amount: 100.0,
+          max_discount: 50.0,
           start_date: new Date('2025-01-01'),
           end_date: new Date('2025-12-31'),
           usage_limit: 100,
@@ -366,8 +429,8 @@ export class BootstrapService {
           code: 'EARLY50',
           description: 'Early bird discount',
           discount_type: 'fixed',
-          discount_value: 50.00,
-          min_amount: 200.00,
+          discount_value: 50.0,
+          min_amount: 200.0,
           start_date: new Date('2025-01-01'),
           end_date: new Date('2025-03-31'),
           usage_limit: 50,
@@ -377,7 +440,9 @@ export class BootstrapService {
       ];
 
       for (const discount of discountCodes) {
-        const existing = await this.discountRepo.findOne({ where: { code: discount.code } });
+        const existing = await this.discountRepo.findOne({
+          where: { code: discount.code },
+        });
         if (!existing) {
           await this.discountRepo.save(this.discountRepo.create(discount));
         }
@@ -433,9 +498,13 @@ export class BootstrapService {
 
       const createdStudents: Student[] = [];
       for (const student of students) {
-        const existing = await this.studentRepo.findOne({ where: { phone: student.phone } });
+        const existing = await this.studentRepo.findOne({
+          where: { phone: student.phone },
+        });
         if (!existing) {
-          const created = await this.studentRepo.save(this.studentRepo.create(student));
+          const created = await this.studentRepo.save(
+            this.studentRepo.create(student),
+          );
           createdStudents.push(created);
         } else {
           createdStudents.push(existing);
@@ -480,7 +549,9 @@ export class BootstrapService {
               },
             });
             if (!existing) {
-              await this.enrollmentRepo.save(this.enrollmentRepo.create(enrollment));
+              await this.enrollmentRepo.save(
+                this.enrollmentRepo.create(enrollment),
+              );
               enrollmentCount++;
             }
           }
@@ -513,9 +584,13 @@ export class BootstrapService {
 
       let userCount = 0;
       for (const userData of sampleUsers) {
-        const existing = await this.userRepo.findOne({ where: { email: userData.email } });
+        const existing = await this.userRepo.findOne({
+          where: { email: userData.email },
+        });
         if (!existing) {
-          const role = await this.roleRepo.findOne({ where: { name: userData.role } });
+          const role = await this.roleRepo.findOne({
+            where: { name: userData.role },
+          });
           if (role) {
             const password_hash = await bcrypt.hash(userData.password, 10);
             await this.userRepo.save(

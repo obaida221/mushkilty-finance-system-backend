@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
@@ -26,7 +31,10 @@ export class EnrollmentController {
   @Post()
   @Permissions('enrollments:create')
   @ApiOperation({ summary: 'Create a new enrollment' })
-  @ApiResponse({ status: 201, description: 'The enrollment has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The enrollment has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateEnrollmentDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class EnrollmentController {
   @Patch(':id')
   @Permissions('enrollments:update')
   @ApiOperation({ summary: 'Update an enrollment' })
-  @ApiResponse({ status: 200, description: 'The enrollment has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The enrollment has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateEnrollmentDto) {
@@ -64,11 +75,13 @@ export class EnrollmentController {
   @Delete(':id')
   @Permissions('enrollments:delete')
   @ApiOperation({ summary: 'Delete an enrollment' })
-  @ApiResponse({ status: 200, description: 'The enrollment has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The enrollment has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
 }
-

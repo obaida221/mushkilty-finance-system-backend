@@ -19,7 +19,6 @@ export class PermissionsController {
     return this.service.findAll();
   }
 
-
   @Post('seed')
   @Permissions('permissions:update')
   async seed() {
@@ -37,35 +36,35 @@ export class PermissionsController {
       'permissions:read',
       'permissions:update',
       'permissions:delete',
-      
+
       // Students
       'students:create',
       'students:read',
       'students:update',
       'students:delete',
       'students:search',
-      
+
       // Courses
       'courses:create',
       'courses:read',
       'courses:update',
       'courses:delete',
       'courses:search',
-      
+
       // Batches
       'batches:create',
       'batches:read',
       'batches:update',
       'batches:delete',
       'batches:search',
-      
+
       // Enrollments
       'enrollments:create',
       'enrollments:read',
       'enrollments:update',
       'enrollments:delete',
       'enrollments:search',
-      
+
       // Discount Codes
       'discount-codes:create',
       'discount-codes:read',
@@ -73,14 +72,14 @@ export class PermissionsController {
       'discount-codes:delete',
       'discount-codes:validate',
       'discount-codes:search',
-      
+
       // Payment Methods
       'payment-methods:create',
       'payment-methods:read',
       'payment-methods:update',
       'payment-methods:delete',
       'payment-methods:search',
-      
+
       // Payments
       'payments:create',
       'payments:read',
@@ -88,7 +87,7 @@ export class PermissionsController {
       'payments:delete',
       'payments:search',
       'payments:reports',
-      
+
       // Refunds
       'refunds:create',
       'refunds:read',
@@ -96,7 +95,7 @@ export class PermissionsController {
       'refunds:delete',
       'refunds:search',
       'refunds:reports',
-      
+
       // Expenses
       'expenses:create',
       'expenses:read',
@@ -104,7 +103,7 @@ export class PermissionsController {
       'expenses:delete',
       'expenses:search',
       'expenses:reports',
-      
+
       // Payroll
       'payrolls:create',
       'payrolls:read',
@@ -112,12 +111,12 @@ export class PermissionsController {
       'payrolls:delete',
       'payrolls:search',
       'payrolls:reports',
-      
+
       // System
       'bootstrap:seed',
       'system:admin',
     ];
-    
+
     const results: any[] = [];
     for (const name of base) {
       results.push(await this.service.ensure(name));

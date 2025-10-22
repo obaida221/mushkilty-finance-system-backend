@@ -6,8 +6,7 @@ import { Refund } from './entities/refund.entity';
 import { Payment } from '../payment/entities/payment.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Refund, Payment])],
+  imports: [TypeOrmModule.forFeature([Refund, Payment])],
   controllers: [RefundController],
   providers: [RefundService],
   exports: [RefundService],

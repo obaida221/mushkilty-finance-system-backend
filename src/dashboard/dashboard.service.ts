@@ -25,25 +25,54 @@ export class DashboardService {
     const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
     // Get current month totals
-    const totalIncome = await this.paymentService.getTotalByMonth(currentYear, currentMonth);
-    const totalExpenses = await this.expenseService.getTotalByMonth(currentYear, currentMonth);
+    const totalIncome = await this.paymentService.getTotalByMonth(
+      currentYear,
+      currentMonth,
+    );
+    const totalExpenses = await this.expenseService.getTotalByMonth(
+      currentYear,
+      currentMonth,
+    );
 
     // Get last month totals for comparison
-    const prevIncome = await this.paymentService.getTotalByMonth(lastMonthYear, lastMonth);
-    const prevExpenses = await this.expenseService.getTotalByMonth(lastMonthYear, lastMonth);
+    const prevIncome = await this.paymentService.getTotalByMonth(
+      lastMonthYear,
+      lastMonth,
+    );
+    const prevExpenses = await this.expenseService.getTotalByMonth(
+      lastMonthYear,
+      lastMonth,
+    );
 
     // Get active students
-    const currentStudents = await this.enrollmentService.getActiveStudentsCount();
-    const prevStudents = await this.enrollmentService.getActiveStudentsCountByMonth(lastMonthYear, lastMonth);
+    const currentStudents =
+      await this.enrollmentService.getActiveStudentsCount();
+    const prevStudents =
+      await this.enrollmentService.getActiveStudentsCountByMonth(
+        lastMonthYear,
+        lastMonth,
+      );
 
     const netProfit = totalIncome - totalExpenses;
     const prevProfit = prevIncome - prevExpenses;
 
     // Calculate percentage changes
-    const incomeChange = prevIncome > 0 ? ((totalIncome - prevIncome) / prevIncome * 100).toFixed(1) : '0.0';
-    const expensesChange = prevExpenses > 0 ? ((totalExpenses - prevExpenses) / prevExpenses * 100).toFixed(1) : '0.0';
-    const profitChange = prevProfit > 0 ? ((netProfit - prevProfit) / prevProfit * 100).toFixed(1) : '0.0';
-    const studentsChange = prevStudents > 0 ? ((currentStudents - prevStudents) / prevStudents * 100).toFixed(1) : '0.0';
+    const incomeChange =
+      prevIncome > 0
+        ? (((totalIncome - prevIncome) / prevIncome) * 100).toFixed(1)
+        : '0.0';
+    const expensesChange =
+      prevExpenses > 0
+        ? (((totalExpenses - prevExpenses) / prevExpenses) * 100).toFixed(1)
+        : '0.0';
+    const profitChange =
+      prevProfit > 0
+        ? (((netProfit - prevProfit) / prevProfit) * 100).toFixed(1)
+        : '0.0';
+    const studentsChange =
+      prevStudents > 0
+        ? (((currentStudents - prevStudents) / prevStudents) * 100).toFixed(1)
+        : '0.0';
 
     return {
       totalIncome,
@@ -86,14 +115,31 @@ export class DashboardService {
     const yearEnd = new Date(year, 11, 31, 23, 59, 59);
 
     // Total income and expenses for the year
-    const totalIncome = await this.paymentService.getTotalByDateRange(yearStart, yearEnd);
-    const totalExpenses = await this.expenseService.getTotalByDateRange(yearStart, yearEnd);
+    const totalIncome = await this.paymentService.getTotalByDateRange(
+      yearStart,
+      yearEnd,
+    );
+    const totalExpenses = await this.expenseService.getTotalByDateRange(
+      yearStart,
+      yearEnd,
+    );
 
     // Monthly breakdown
-    const monthlyBreakdown: Array<{month: number, income: number, expenses: number, profit: number}> = [];
+    const monthlyBreakdown: Array<{
+      month: number;
+      income: number;
+      expenses: number;
+      profit: number;
+    }> = [];
     for (let month = 1; month <= 12; month++) {
-      const monthIncome = await this.paymentService.getTotalByMonth(year, month);
-      const monthExpenses = await this.expenseService.getTotalByMonth(year, month);
+      const monthIncome = await this.paymentService.getTotalByMonth(
+        year,
+        month,
+      );
+      const monthExpenses = await this.expenseService.getTotalByMonth(
+        year,
+        month,
+      );
 
       monthlyBreakdown.push({
         month,
@@ -114,13 +160,19 @@ export class DashboardService {
 
   async getRecentActivities(limit: number = 10) {
     // Get recent data from each service
-    const recentPayments = await this.paymentService.getRecentPayments(Math.ceil(limit / 2));
-    const recentEnrollments = await this.enrollmentService.getRecentEnrollments(Math.ceil(limit / 2));
-    const recentExpenses = await this.expenseService.getRecentExpenses(Math.ceil(limit / 3));
+    const recentPayments = await this.paymentService.getRecentPayments(
+      Math.ceil(limit / 2),
+    );
+    const recentEnrollments = await this.enrollmentService.getRecentEnrollments(
+      Math.ceil(limit / 2),
+    );
+    const recentExpenses = await this.expenseService.getRecentExpenses(
+      Math.ceil(limit / 3),
+    );
 
     // Combine and sort all activities
     const activities = [
-      ...recentPayments.map(payment => ({
+      ...recentPayments.map((payment) => ({
         type: 'payment',
         id: payment.id,
         date: payment.paid_at,
@@ -129,7 +181,7 @@ export class DashboardService {
         currency: payment.currency,
         method: payment.paymentMethod?.name,
       })),
-      ...recentEnrollments.map(enrollment => ({
+      ...recentEnrollments.map((enrollment) => ({
         type: 'enrollment',
         id: enrollment.id,
         date: enrollment.enrolled_at,
@@ -137,7 +189,7 @@ export class DashboardService {
         status: enrollment.status,
         batch: enrollment.batch?.name,
       })),
-      ...recentExpenses.map(expense => ({
+      ...recentExpenses.map((expense) => ({
         type: 'expense',
         id: expense.id,
         date: expense.expense_date,

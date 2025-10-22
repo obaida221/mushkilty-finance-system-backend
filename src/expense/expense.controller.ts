@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ExpenseService } from './expense.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -26,7 +31,10 @@ export class ExpenseController {
   @Post()
   @Permissions('expenses:create')
   @ApiOperation({ summary: 'Create a new expense' })
-  @ApiResponse({ status: 201, description: 'The expense has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The expense has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateExpenseDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class ExpenseController {
   @Patch(':id')
   @Permissions('expenses:update')
   @ApiOperation({ summary: 'Update an expense' })
-  @ApiResponse({ status: 200, description: 'The expense has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The expense has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateExpenseDto) {
@@ -64,7 +75,10 @@ export class ExpenseController {
   @Delete(':id')
   @Permissions('expenses:delete')
   @ApiOperation({ summary: 'Delete an expense' })
-  @ApiResponse({ status: 200, description: 'The expense has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The expense has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {

@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsIn,
   IsNumber,
   MaxLength,
-  IsNotEmpty 
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateExpenseDto {

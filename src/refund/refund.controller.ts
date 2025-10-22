@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { RefundService } from './refund.service';
 import { CreateRefundDto } from './dto/create-refund.dto';
 import { UpdateRefundDto } from './dto/update-refund.dto';
@@ -26,7 +31,10 @@ export class RefundController {
   @Post()
   @Permissions('refunds:create')
   @ApiOperation({ summary: 'Create a new refund' })
-  @ApiResponse({ status: 201, description: 'The refund has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The refund has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreateRefundDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class RefundController {
   @Patch(':id')
   @Permissions('refunds:update')
   @ApiOperation({ summary: 'Update a refund' })
-  @ApiResponse({ status: 200, description: 'The refund has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The refund has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdateRefundDto) {
@@ -64,11 +75,13 @@ export class RefundController {
   @Delete(':id')
   @Permissions('refunds:delete')
   @ApiOperation({ summary: 'Delete a refund' })
-  @ApiResponse({ status: 200, description: 'The refund has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The refund has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
 }
-

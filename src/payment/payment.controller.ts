@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -26,7 +31,10 @@ export class PaymentController {
   @Post()
   @Permissions('payments:create')
   @ApiOperation({ summary: 'Create a new payment' })
-  @ApiResponse({ status: 201, description: 'The payment has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The payment has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreatePaymentDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class PaymentController {
   @Patch(':id')
   @Permissions('payments:update')
   @ApiOperation({ summary: 'Update a payment' })
-  @ApiResponse({ status: 200, description: 'The payment has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The payment has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdatePaymentDto) {
@@ -64,11 +75,13 @@ export class PaymentController {
   @Delete(':id')
   @Permissions('payments:delete')
   @ApiOperation({ summary: 'Delete a payment' })
-  @ApiResponse({ status: 200, description: 'The payment has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The payment has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
 }
-

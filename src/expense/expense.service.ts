@@ -20,31 +20,41 @@ export class ExpenseService {
   async findAll(): Promise<Expense[]> {
     return this.repository.find({
       relations: ['user'],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Expense> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user'],
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Expense with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
   async update(id: number, updateDto: UpdateExpenseDto): Promise<Expense> {
     const entity = await this.findOne(id);
+
+    if (!entity) {
+      throw new NotFoundException(`Expense with ID ${id} not found`);
+    }
+
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+
+    if (!entity) {
+      throw new NotFoundException(`Expense with ID ${id} not found`);
+    }
+
     await this.repository.delete(id);
   }
 
@@ -53,9 +63,12 @@ export class ExpenseService {
     const result = await this.repository
       .createQueryBuilder('expense')
       .select('SUM(expense.amount)', 'total')
-      .where('expense.expense_date BETWEEN :start AND :end', { start: startDate, end: endDate })
+      .where('expense.expense_date BETWEEN :start AND :end', {
+        start: startDate,
+        end: endDate,
+      })
       .getRawOne();
-    
+
     return parseFloat(result?.total || 0);
   }
 
@@ -66,21 +79,37 @@ export class ExpenseService {
       .where('EXTRACT(YEAR FROM expense.expense_date) = :year', { year })
       .andWhere('EXTRACT(MONTH FROM expense.expense_date) = :month', { month })
       .getRawOne();
-    
+
     return parseFloat(result?.total || 0);
   }
 
-  async getExpenseChartData(months: number = 6): Promise<Array<{month: string, expenses: number}>> {
+  async getExpenseChartData(
+    months: number = 6,
+  ): Promise<Array<{ month: string; expenses: number }>> {
     const monthNames = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
 
-    const result: Array<{month: string, expenses: number}> = [];
+    const result: Array<{ month: string; expenses: number }> = [];
     const currentDate = new Date();
 
     for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1,
+      );
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
 

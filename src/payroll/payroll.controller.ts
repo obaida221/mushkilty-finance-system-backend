@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { PayrollService } from './payroll.service';
 import { CreatePayrollDto } from './dto/create-payroll.dto';
 import { UpdatePayrollDto } from './dto/update-payroll.dto';
@@ -26,7 +31,10 @@ export class PayrollController {
   @Post()
   @Permissions('payrolls:create')
   @ApiOperation({ summary: 'Create a new payroll' })
-  @ApiResponse({ status: 201, description: 'The payroll has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The payroll has been successfully created.',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createDto: CreatePayrollDto) {
     return this.service.create(createDto);
@@ -54,7 +62,10 @@ export class PayrollController {
   @Patch(':id')
   @Permissions('payrolls:update')
   @ApiOperation({ summary: 'Update a payroll' })
-  @ApiResponse({ status: 200, description: 'The payroll has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The payroll has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(@Param('id') id: string, @Body() updateDto: UpdatePayrollDto) {
@@ -64,11 +75,13 @@ export class PayrollController {
   @Delete(':id')
   @Permissions('payrolls:delete')
   @ApiOperation({ summary: 'Delete a payroll' })
-  @ApiResponse({ status: 200, description: 'The payroll has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The payroll has been successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
 }
-

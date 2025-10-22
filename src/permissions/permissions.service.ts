@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Permission } from './entities/permission.entity';
 
-
 @Injectable()
 export class PermissionsService {
   constructor(
@@ -16,7 +15,6 @@ export class PermissionsService {
     return this.repo.find();
   }
 
- 
   async ensure(name: string, description?: string) {
     let perm = await this.repo.findOne({ where: { name } });
     if (!perm) {

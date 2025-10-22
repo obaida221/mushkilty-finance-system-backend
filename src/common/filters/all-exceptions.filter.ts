@@ -23,7 +23,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const responseBody = exception.getResponse();
-      
+
       if (typeof responseBody === 'string') {
         message = responseBody;
       } else if (typeof responseBody === 'object' && responseBody !== null) {
@@ -48,7 +48,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Log error details to console for immediate debugging
     console.error('\n=== ERROR CAUGHT BY EXCEPTION FILTER ===');
     console.error('Error Details:', JSON.stringify(errorDetails, null, 2));
-    
+
     if (exception instanceof Error) {
       console.error('Exception Stack:', exception.stack);
       console.error('Exception Message:', exception.message);

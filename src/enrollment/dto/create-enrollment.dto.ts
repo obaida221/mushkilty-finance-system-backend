@@ -1,13 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsOptional, 
-  IsInt, 
-  IsDateString, 
-  IsIn, 
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsDateString,
+  IsIn,
   IsNumber,
   MaxLength,
-  IsNotEmpty 
 } from 'class-validator';
 
 export class CreateEnrollmentDto {
@@ -45,7 +44,10 @@ export class CreateEnrollmentDto {
   @IsDateString()
   enrolled_at?: Date;
 
-  @ApiPropertyOptional({ example: 'pending', description: 'pending, accepted, dropped, completed' })
+  @ApiPropertyOptional({
+    example: 'pending',
+    description: 'pending, accepted, dropped, completed',
+  })
   @IsOptional()
   @IsString()
   @IsIn(['pending', 'accepted', 'dropped', 'completed'])

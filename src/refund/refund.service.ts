@@ -18,17 +18,19 @@ export class RefundService {
   async create(createDto: CreateRefundDto): Promise<Refund> {
     // First, update the payment status to "returned"
     const payment = await this.paymentRepository.findOne({
-      where: { id: createDto.payment_id }
+      where: { id: createDto.payment_id },
     });
-    
+
     if (!payment) {
-      throw new NotFoundException(`Payment with ID ${createDto.payment_id} not found`);
+      throw new NotFoundException(
+        `Payment with ID ${createDto.payment_id} not found`,
+      );
     }
-    
+
     // Update payment status to returned
     payment.status = 'returned';
     await this.paymentRepository.save(payment);
-    
+
     // Create the refund
     const entity = this.repository.create(createDto);
     return this.repository.save(entity);
@@ -36,32 +38,50 @@ export class RefundService {
 
   async findAll(): Promise<Refund[]> {
     return this.repository.find({
-      relations: ['payment', 'payment.enrollment', 'payment.enrollment.student'],
-      order: { created_at: 'DESC' }
+      relations: [
+        'payment',
+        'payment.enrollment',
+        'payment.enrollment.student',
+      ],
+      order: { created_at: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Refund> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['payment', 'payment.enrollment', 'payment.enrollment.student']
+      relations: [
+        'payment',
+        'payment.enrollment',
+        'payment.enrollment.student',
+      ],
     });
-    
+
     if (!entity) {
       throw new NotFoundException(`Refund with ID ${id} not found`);
     }
-    
+
     return entity;
   }
 
   async update(id: number, updateDto: UpdateRefundDto): Promise<Refund> {
     const entity = await this.findOne(id);
+
+    if (!entity) {
+      throw new NotFoundException(`Expense with ID ${id} not found`);
+    }
+
     await this.repository.update(id, updateDto);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
+
+    if (!entity) {
+      throw new NotFoundException(`Expense with ID ${id} not found`);
+    }
+
     await this.repository.delete(id);
   }
 }
